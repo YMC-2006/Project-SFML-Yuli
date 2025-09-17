@@ -46,19 +46,17 @@ void Game::runMainWindow() {
     spriteMenu.setOrigin(menu.getSize().x / 2.f, menu.getSize().y / 2.f);
 
     Texture playButton;
-    if (!playButton.loadFromFile("assets/playButto.png")) {
-        cout << "Error loading image!!" << endl;
-    }
+    playButton.loadFromFile("assets/playButto.png");
     Sprite spritePlay(playButton);
-    spritePlay.setPosition(395, 370);
-    spritePlay.setScale(0.30f, 0.30f);
+    spritePlay.setPosition(305, 370);
+    spritePlay.setScale(0.50f, 0.50f);
     spritePlay.setOrigin(playButton.getSize().x / 2.f, playButton.getSize().y);
 
     Texture credits;
     credits.loadFromFile("assets/credits.png");
     Sprite spriteCredits(credits);
-    spriteCredits.setPosition(395, 440);
-    spriteCredits.setScale(0.30f, 0.30f);
+    spriteCredits.setPosition(505, 370);
+    spriteCredits.setScale(0.50f, 0.50f);
     spriteCredits.setOrigin(playButton.getSize().x / 2.f, playButton.getSize().y);
 
     // Load textures
@@ -392,7 +390,7 @@ void Game::runMainWindow() {
         //Buttons
         windowMain.draw(spriteCredits);
         windowMain.draw(spritePlay);
-        windowMain.draw(spriteMenu);
+        //windowMain.draw(spriteMenu);
 
         //Music sprite depends on the bool musicON
         if (musicON) {

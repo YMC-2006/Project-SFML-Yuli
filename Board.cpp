@@ -210,15 +210,15 @@ bool Board::checkMatchAt(int x, int y) {
 
     int horizontalCounter = 1, verticalCounter = 1;
 
-    // Horizontal
+    // Horizontal Left
     for (int j = y - 1; j >= 0 && matrix[x][j].getType() == gemType; j--) horizontalCounter++;
-       
-    
+    // Horizontal Right
     for (int j = y + 1; j < size && matrix[x][j].getType() == gemType; j++) horizontalCounter++;
     if (horizontalCounter >= 3) return true;
 
-    // Vertical
+    // Vertical Top
     for (int i = x - 1; i >= 0 && matrix[i][y].getType() == gemType; i--) verticalCounter++;
+    // Vertical Bottom
     for (int i = x + 1; i < size && matrix[i][y].getType() == gemType; i++) verticalCounter++;
     if (verticalCounter >= 3) return true;
 
@@ -240,7 +240,7 @@ int Board::countPoints() {
             {
                 int k = j;
                 while (k < size && matrix[i][k].getType() == currentType) {
-                    if (!marked[i][k]) {        // ✅ no volver a contar
+                    if (!marked[i][k]) {        //  dont count again
                         marked[i][k] = true;
                         totalGems++;
                     }
@@ -254,7 +254,7 @@ int Board::countPoints() {
             {
                 int k = i;
                 while (k < size && matrix[k][j].getType() == currentType) {
-                    if (!marked[k][j]) {        // ✅ no volver a contar
+                    if (!marked[k][j]) {        //  dont count again
                         marked[k][j] = true;
                         totalGems++;
                     }
@@ -264,7 +264,7 @@ int Board::countPoints() {
         }
     }
 
-    return totalGems; // número exacto de gemas únicas
+    return totalGems; // exact number of unique gems
     cout << "Total gems found in line: "<<totalGems<<endl;
    
 }
@@ -328,7 +328,7 @@ void Board::pullGravity() {
     const float offsetX = 250.f;   // same values as in fillMatrix
     const float offsetY = 180.f;
     const float tileSize = 70.f;
-
+        
     // Loop through each column
     for (int col = 0; col < size; col++) {
 

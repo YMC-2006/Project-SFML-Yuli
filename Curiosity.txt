@@ -1,0 +1,113 @@
+﻿So theres a difference between using this 2 lines when checking where the user clicked:
+
+if (matrix[i][j].getSprite().getPosition() == mousePosF) {...}
+if (matrix[i][j].getSprite().getGlobalBounds().contains(MousePosF)){...}
+
+because the first one will only work in you click on the top-left pixel of the sprite insteaddd the only
+one is gonna work if you click on any part of the sprite so the second one is the right option
+-------------------------------------------------------------------------------------------------------
+** The rotating GEMS ** 😁😁
+
+So its actually pretty simple after we load the texture to the sprites we have to set an origin to the sprites bc a sprite
+rotates around its top-left corner, so if we wanna make it spin around his own center we have to set the origin
+
+sprite.setOrigin( texture.getSize().x / 2.f,texture.getSize().y / 2.f)
+
+and then we set the position of where we want the sprite to be:
+sprite.setPosition(400.f, 200.f) for example.
+
+then we just have to call it on our main loop:
+
+sprite.rotate(1.f); // this means it rotates 1 degree per frame
+this is one way of making it I used delta time because it doesnt matter the FPS of your computer it will run smoothly
+we just have to make sure to create and object from the class Clock and then our variable
+FLOAT deltaTime = clock.restart().asSeconds();	
+
+in my case I decided to create a variable for the speed and called it float rotationSpeed = 100.f; // degrees per second
+so in my main I called it like this:
+
+// Rotate each gem on its center
+purple.rotate(rotationSpeed * dt);
+
+its better!
+--------------------------------------------------------------------------------------------------------
+ANOTHER WAY OF CLOSING THE WINDOWS!
+You can use isKeyPressed to do many things but something new I learned was that there are other ways to close the window
+not only using
+if (event.type == Event::Closed) { gameWindow.close(); }
+There is another way -> if (Keyboard::isKeyPressed(Keyboard::Escape)) gameWindow.close();
+and if you want to close all the windows open -> close(0);
+
+------------------------------------------------------------------------------------------------------
+
+How to make a hover effect on a sprite!!
+
+1. set the origin of the sprite so it will be bigger on its own center
+
+sprite.setOrigin(texture.getSize().x / 2.f, texture.setOrigin().y / 2.f);
+
+2. create the vector2i and vector2f that are going to contain the position of the mouse.
+3. ask if the sprite contains the mouse position
+4. make an if else sentence example
+
+            if (spritePlay.getGlobalBounds().contains(mousePosF)) {
+              spritePlay.setScale(0.32f, 0.32f);
+
+              if (event.type == Event::MouseButtonPressed) {    
+                  cout << "¡Button PLAY pressed!" << endl;
+                  runSecondWindow();
+                  windowMain.close();
+               }
+          }
+          else {
+              spritePlay.setScale(0.30f, 0.30f);
+        }
+
+--------------------------------------------------------------------------------------------------------------------------
+
+How to change your cursor shape!! 😁
+2 ways
+
+First way (change it with a sprite)
+so the first thing is that in the current window that you are at you must disable the visible function for the cursor:
+!!!!!!!!!! window.setMouseCursorVisible(false) !!!!!!!!!!! ----------->> this is the first step and its very important
+then you have to proceed to load the texture and the sprite just like any other sprite
+
+Texture cursor;
+cursor.loadFromFile("assets/cursor.png");
+sprite spriteCursor(cursor);
+
+then you must update the sprites position to follow the cursor each frame
+Vector2i mousePosCursor = Mouse::GetPosition(window);
+cursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y))
+
+and in your main loop you draw it:
+window.draw(xcursor);
+
+
+Second way
+
+Cursor cursor;
+
+----------------------------------------------------------------------------------------------------------------------------
+
+I had a bit of trouble with counting the points so I made a function for it
+
+the most important thing is that this function works pretty similar to the function in charge of deleting the matched gems!
+When you need to count elements in an array that can belong to multiple patterns (such as horizontal and vertical matches, or overlapping groups),
+you should be sure to mark what has already been processed so as not to duplicate counts.
+Thats why I add an array that works as a counter so the gems wont be count incorrectly
+and why it works?
+
+Each time you enter countMatchedGems():
+
+A new marked array is created on the stack. ->  bool marked[8][8] = { false };
+
+It's all initialized to false.
+
+It's used only during that count.
+
+When you exit the function, the array disappears.
+
+
+---------------------------------------------------------------------------------------------------------------

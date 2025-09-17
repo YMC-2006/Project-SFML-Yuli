@@ -109,6 +109,3 @@ It's used only during that count.
 
 When you exit the function, the array disappears.
 
-
----------------------------------------------------------------------------------------------------------------
-kaksjdhsakdjhaksj hola ke ace

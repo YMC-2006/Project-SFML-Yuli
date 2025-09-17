@@ -17,7 +17,7 @@ public:
 	//Constructor
 	Gem();
 
-	void initMatrix(int t, Texture& tex); // inicializa gema
+	void initGem(int t, Texture& tex); // initialize gem
 	void startShake();
 	int getType();
 	void setType(int t);

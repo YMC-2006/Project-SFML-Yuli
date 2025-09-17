@@ -9,7 +9,7 @@ using namespace std;
 using namespace sf;
 
 
-int randTexture;
+int randType;
 
 Board::Board() { //Constructor vacido
 
@@ -27,9 +27,9 @@ void Board::fillMatrix() {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 		
-			randTexture = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
+            randType = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
 		
-			matrix[i][j].initMatrix(randTexture, textures[randTexture]);
+			matrix[i][j].initGem(randType, textures[randType]);
 			matrix[i][j].getSprite().setPosition(250 + 70.f * i,180 + 70.f * j);
 			matrix[i][j].getSprite().setOrigin(
 				matrix[i][j].getSprite().getTexture()->getSize().x / 2.f,
@@ -192,11 +192,11 @@ int Board::noInitialMatch(int i, int j) {
 	int randType;
 
 	do {
-		randType = rand() % 5;  // generamos entre 0 y 4
+		randType = rand() % 5;  // rand num between 0 and 4
 	} while (
-		// chequea horizontal a la izquierda (dos iguales seguidos)
+		// horizontal check to the left (two equals in a row)
 		(j >= 2 && matrix[i][j - 1].getType() == randType && matrix[i][j - 2].getType() == randType) ||
-		// chequea vertical arriba (dos iguales seguidos)
+		// vertical check up (two equals in a row)
 		(i >= 2 && matrix[i - 1][j].getType() == randType && matrix[i - 2][j].getType() == randType)
 		);
 
@@ -316,7 +316,7 @@ bool Board::deleteMatch()    {
         }
     }
 
-    // Eliminar
+    // Delete
     for (auto& p : toDelete)
         matrix[p.first][p.second].setType(-1);
 
@@ -329,43 +329,43 @@ void Board::pullGravity() {
     const float offsetY = 180.f;
     const float tileSize = 70.f;
 
-    // Recorremos cada columna
+    // Loop through each column
     for (int col = 0; col < size; col++) {
 
-        int emptySpot = size - 1;  // comenzamos desde abajo
+        int emptySpot = size - 1; // start from the bottom
 
-        // --- Bajar gemas existentes ---
+        // --- Download existing gems ---
         for (int row = size - 1; row >= 0; row--) {
             if (matrix[col][row].getType() != -1) {
-                // Si encontramos una gema válida y hay hueco debajo
+                // If we find a valid gem and there's space below it
                 if (row != emptySpot) {
-                    // Usamos swap para mover la gema y evitar duplicados
+                    // We use swap to move the gem and avoid duplicates
                     swap(matrix[col][emptySpot], matrix[col][row]);
 
-                    // Actualizamos la posición visual
+                    // We update the visual position
                     matrix[col][emptySpot].getSprite().setPosition(
                         offsetX + tileSize * col,
                         offsetY + tileSize * emptySpot
                     );
 
-                    // Dejamos la posición de arriba marcada como vacía
+                    // We leave the top position marked as empty
                     matrix[col][row].setType(-1);
                 }
                 emptySpot--;
             }
         }
 
-        // --- Generar nuevas gemas en los huecos superiores ---
+        // --- Generate new gems in the upper slots ---
         for (int row = emptySpot; row >= 0; row--) {
-            int newType = rand() % 5; // número de tipos de gema
+            int newType = rand() % 5; // number of gem types
 
-            // Marcamos el nuevo tipo (solo cambia el valor y transparencia)
+            // Set the new type (only the value and transparency change)
             matrix[col][row].setType(newType);
 
-            // Asignamos la textura correcta 
+            // Assign the correct texture
             matrix[col][row].getSprite().setTexture(textures[newType]);
 
-            // Posición en pantalla
+            // Screen position
             matrix[col][row].getSprite().setPosition(
                 offsetX + tileSize * col,
                 offsetY + tileSize * row
@@ -433,7 +433,7 @@ void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Ve
     for (int c = 0; c < cycles; c++) {
         g1.getSprite().setPosition(pos1.x + offSet, pos1.y);
         g2.getSprite().setPosition(pos2.x - offSet, pos2.y);
-        window.draw(g1.getSprite()); // Redibuja (necesitas acceso al window)
+        window.draw(g1.getSprite()); 
         window.display();
         sleep(delay);
 

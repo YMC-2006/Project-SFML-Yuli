@@ -54,7 +54,7 @@ void Game::runMainWindow() {
 
     Texture credits;
     credits.loadFromFile("assets/credits.png");
-    Sprite spriteCredits(credits);
+    Sprite spriteCredits(credits); 
     spriteCredits.setPosition(505, 370);
     spriteCredits.setScale(0.50f, 0.50f);
     spriteCredits.setOrigin(playButton.getSize().x / 2.f, playButton.getSize().y);
@@ -85,7 +85,7 @@ void Game::runMainWindow() {
     red.setOrigin(texRed.getSize().x / 2.f, texRed.getSize().y / 2.f);
 
     Clock clock;
-    float rotationSpeed = 100.f; // grados por segundo
+    float rotationSpeed = 100.f; // degrees per second
     bool musicON = false;
 
     Texture creditsIMG;

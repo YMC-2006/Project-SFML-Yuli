@@ -1,6 +1,6 @@
 ﻿#include <SFML/Graphics.hpp>
 #include "Gem.h"
-#include <cstdlib> // para rand
+#include <cstdlib> // rand
 using namespace sf;
 using namespace std;
 
@@ -9,7 +9,7 @@ Gem::Gem() {
 }
 
 
-void Gem::initMatrix(int t, Texture& tex) {
+void Gem::initGem(int t, Texture& tex) {
     type = t;
     sprite.setTexture(tex);
     sprite.setScale(.70f, .70f); //the size of each individual gem is 70px cus 80 to big

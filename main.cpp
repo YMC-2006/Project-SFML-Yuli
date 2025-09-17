@@ -1,7 +1,7 @@
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
 #include <iostream>
-#include <ctime>   // para time()
+#include <ctime>   // time()
 #include "Game.h"
 #include "Board.h"
 using namespace std;

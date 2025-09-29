@@ -14,4 +14,6 @@ public:
 	void runSecondWindow();
 	void runThirdWindow(int finalScore);
 
+	void runLVLwindow();
+
 };

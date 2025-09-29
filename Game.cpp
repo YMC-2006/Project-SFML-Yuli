@@ -48,15 +48,15 @@ void Game::runMainWindow() {
     Texture playButton;
     playButton.loadFromFile("assets/playButto.png");
     Sprite spritePlay(playButton);
-    spritePlay.setPosition(305, 370);
-    spritePlay.setScale(0.50f, 0.50f);
+    spritePlay.setPosition(395, 370);
+    spritePlay.setScale(0.30f, 0.30f);
     spritePlay.setOrigin(playButton.getSize().x / 2.f, playButton.getSize().y);
 
     Texture credits;
     credits.loadFromFile("assets/credits.png");
     Sprite spriteCredits(credits); 
-    spriteCredits.setPosition(505, 370);
-    spriteCredits.setScale(0.50f, 0.50f);
+    spriteCredits.setPosition(395, 440);
+    spriteCredits.setScale(0.30f, 0.30f);
     spriteCredits.setOrigin(playButton.getSize().x / 2.f, playButton.getSize().y);
 
     // Load textures
@@ -154,7 +154,7 @@ void Game::runMainWindow() {
                     clickSound.play();
                     cout << "¡Button PLAY pressed!" << endl;
                     windowMain.close();
-                    runSecondWindow();
+                    runLVLwindow();
                    
                 }
                 else {
@@ -375,7 +375,6 @@ void Game::runMainWindow() {
 
         // Draw the main window
         windowMain.clear();
-
         windowMain.draw(spriteBackground);
        
 
@@ -390,7 +389,7 @@ void Game::runMainWindow() {
         //Buttons
         windowMain.draw(spriteCredits);
         windowMain.draw(spritePlay);
-        //windowMain.draw(spriteMenu);
+        windowMain.draw(spriteMenu);
 
         //Music sprite depends on the bool musicON
         if (musicON) {
@@ -408,6 +407,52 @@ void Game::runMainWindow() {
     }
 }
         
+
+
+void Game::runLVLwindow() {
+    RenderWindow levelsWindow(VideoMode(800, 600), "Levels");
+    Texture bgTexture; bgTexture.loadFromFile("assets/levelsBackground.png");
+    Sprite bgSprite(bgTexture);
+
+    const float scrollSpeed = 10.f;
+    View camera(FloatRect(0, 0, 800, 600));
+    levelsWindow.setView(camera);
+
+    while (levelsWindow.isOpen()) {
+        Event event;
+        while (levelsWindow.pollEvent(event)) {
+            if (event.type == Event::Closed) levelsWindow.close();
+
+
+            if (event.type == Event::MouseWheelScrolled) {
+                camera.move(0, -event.mouseWheelScroll.delta * scrollSpeed);
+            }
+           
+
+        }
+
+        //in case the user tries to scroll with the keyboard :)
+        if (Keyboard::isKeyPressed(Keyboard::Up)) camera.move(0, -scrollSpeed);
+        if (Keyboard::isKeyPressed(Keyboard::Down)) camera.move(0, scrollSpeed);
+
+        float topLimit = 0.f;
+        float topBottom = 1600.f - 600.f;
+        Vector2f pos = camera.getCenter();
+        float halfHeight = camera.getSize().y / 2.f;
+
+        if (pos.y - halfHeight < topLimit)       pos.y = halfHeight;
+        if (pos.y + halfHeight > 1600.f)         pos.y = 1600.f - halfHeight;
+        camera.setCenter(pos);
+        levelsWindow.setView(camera);               
+      
+        levelsWindow.clear();
+        levelsWindow.draw(bgSprite);
+        levelsWindow.display();
+
+    }
+}
+
+
 void Game::runSecondWindow() {
 
     Texture cursor;

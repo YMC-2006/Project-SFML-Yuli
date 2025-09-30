@@ -410,8 +410,26 @@ void Game::runMainWindow() {
 
 
 void Game::runLVLwindow() {
+
+    Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
+    Sprite level1Button(txLevel1); level1Button.setPosition(70.f, 160.f); level1Button.setScale(.30f, .30f);
+
+    Texture txLevel2; txLevel2.loadFromFile("assets/level2.png");
+    Sprite level2Button(txLevel2); level2Button.setPosition(450.f, 350.f); level2Button.setScale(.30f, .30f);
+
+    Texture txLevel3; txLevel3.loadFromFile("assets/level3.png");
+    Sprite level3Button(txLevel3); level3Button.setPosition(90.f, 560.f); level3Button.setScale(.30f, .30f);
+
+    Texture txLevel4; txLevel4.loadFromFile("assets/level4.png");
+    Sprite level4Button(txLevel4); level4Button.setPosition(100.f, 60.f); level4Button.setScale(.30f, .30f);
+
+    Texture txLevel5; txLevel5.loadFromFile("assets/level5.png");
+    Sprite level5Button(txLevel5); level5Button.setPosition(100.f, 60.f); level5Button.setScale(.30f, .30f);
+
+    //--------------------------------------------------------------------------------------------------------
+
     RenderWindow levelsWindow(VideoMode(800, 600), "Levels");
-    Texture bgTexture; bgTexture.loadFromFile("assets/levelsBackground.png");
+    Texture bgTexture; bgTexture.loadFromFile("assets/lvlsbg.png");
     Sprite bgSprite(bgTexture);
 
     const float scrollSpeed = 10.f;
@@ -443,10 +461,27 @@ void Game::runLVLwindow() {
         if (pos.y - halfHeight < topLimit)       pos.y = halfHeight;
         if (pos.y + halfHeight > 1600.f)         pos.y = 1600.f - halfHeight;
         camera.setCenter(pos);
-        levelsWindow.setView(camera);               
+        levelsWindow.setView(camera);        
+
+
+        if (event.type == Event::MouseButtonPressed) {
+            Vector2i mousePos = Mouse::getPosition(levelsWindow);
+            Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+            if (level1Button.getGlobalBounds().contains(mousePosF)) {
+                runSecondWindow();
+            }
+        }
+
+
+
+
+
+
+
       
         levelsWindow.clear();
         levelsWindow.draw(bgSprite);
+        levelsWindow.draw(level1Button); levelsWindow.draw(level2Button); levelsWindow.draw(level3Button);
         levelsWindow.display();
 
     }

@@ -198,14 +198,56 @@ void Game::runMainWindow() {
                     clickSound.play();
                     RenderWindow windowTest(VideoMode(800,600),"Test");
                     windowTest.setMouseCursorVisible(false);
-                        
+
+                    RectangleShape outline(Vector2f(300, 30));
+                    outline.setFillColor(Color::Transparent); outline.setOutlineColor(Color::White); outline.setOutlineThickness(2);
+                    outline.setPosition(250, 250);
+                   
+
+                    RectangleShape fill(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(250, 250);
+                    // Progress variables
+                    int maxPresses = 15;
+                    int presses = 0;
+                    float maxWidth = 300.f; // full width of bar
+                    Texture tRedGem; tRedGem.loadFromFile("assets/redGem.png");
+                    Sprite redGem(tRedGem); redGem.setPosition(300, 300);
                     while (windowTest.isOpen()) {
                          float dt = clock.restart().asSeconds();
                         while (windowTest.pollEvent(event)) {
                             if (event.type == Event::Closed) windowTest.close();
                             if (Keyboard::isKeyPressed(Keyboard::Escape)) windowTest.close();
                             
-
+                            if (event.type == Event::MouseButtonPressed) {
+                                Vector2i mousePos = Mouse::getPosition(windowMain);
+                                Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+                                if (redGem.getGlobalBounds().contains(mousePosF)) {
+                                    if (presses < maxPresses) {
+                                        presses++;
+                                        float progress = (float)presses / maxPresses;
+                                        fill.setSize(Vector2f(maxWidth * progress, 30));
+                                    }
+                                   
+                                    if (presses == 3) {
+                                        fill.setFillColor(Color::Yellow);
+                                    }
+                                    if (presses == 6) {
+                                        fill.setFillColor(Color::Red);
+                                    } if (presses == 9) {
+                                        fill.setFillColor(Color::Magenta);
+                                    }
+                                    if (presses == 15) {
+                                        fill.setFillColor(Color::Yellow);
+                                      
+                                    }
+                                    if (presses == maxPresses) {
+                                        presses = -15;
+                                        maxPresses = 0;
+                                        float progress = (float)presses / maxPresses;
+                                        fill.setSize(Vector2f(maxWidth * progress, 30));
+                                    }
+                                }
+                               
+                            }
                             if (event.type == Event::MouseButtonPressed) {
                                 Vector2i mousePos = Mouse::getPosition(windowMain);
                                 Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
@@ -267,13 +309,16 @@ void Game::runMainWindow() {
                         moveTowards(spritePurpleGem, purpleTarget, purpleMoving);
                         moveTowards(spriteYellowGem, yellowTarget, yellowMoving);
 
-                        windowTest.clear(Color::Red);
+                        windowTest.clear(Color::Blue);
                         windowTest.draw(spriteYellowGem);
                         windowTest.draw(spritePurpleGem);
 
 
                         Vector2i mousePosCursor = Mouse::getPosition(windowTest);
                         spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
+                      
+                        windowTest.draw(redGem);
+                        windowTest.draw(outline); windowTest.draw(fill);
                         windowTest.draw(spriteCursor);
                         windowTest.display();
                        
@@ -429,8 +474,15 @@ void Game::runLVLwindow() {
     //--------------------------------------------------------------------------------------------------------
 
     RenderWindow levelsWindow(VideoMode(800, 600), "Levels");
-    Texture bgTexture; bgTexture.loadFromFile("assets/lvlsbg.png");
+    Texture bgTexture; bgTexture.loadFromFile("assets/lvlsBag.png");
     Sprite bgSprite(bgTexture);
+
+    static SoundBuffer clickBuffer;
+    static Sound clickSound;
+
+    clickBuffer.loadFromFile("assets/clickSound.wav");
+    clickSound.setBuffer(clickBuffer);
+   
 
     const float scrollSpeed = 10.f;
     View camera(FloatRect(0, 0, 800, 600));
@@ -468,6 +520,13 @@ void Game::runLVLwindow() {
             Vector2i mousePos = Mouse::getPosition(levelsWindow);
             Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
             if (level1Button.getGlobalBounds().contains(mousePosF)) {
+                clickSound.play();
+                runSecondWindow();
+            }
+            if (level2Button.getGlobalBounds().contains(mousePosF)) {
+                runSecondWindow();
+            }
+            if (level3Button.getGlobalBounds().contains(mousePosF)) {
                 runSecondWindow();
             }
         }
@@ -504,7 +563,7 @@ void Game::runSecondWindow() {
    
     RenderWindow gameWindow(VideoMode(1000, 800), "Game");
     gameWindow.setMouseCursorVisible(false);
-   
+    board.initBar();
     while (gameWindow.isOpen()) {
   
         Event event;
@@ -526,7 +585,7 @@ void Game::runSecondWindow() {
             gameWindow.draw(spriteBackImg);
             board.drawBoard(gameWindow);
             board.swapGems(gameWindow, event);
-
+            board.barProgress(gameWindow, event);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             board.drawText(gameWindow, event);
 

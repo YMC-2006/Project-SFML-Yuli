@@ -17,12 +17,21 @@ private:
 	int pointsCounter = 0;
 	int totalMoves = 20;
 
+	//Bar progress
+	int presses;
+	int maxPresses;
+	float maxWidth;
+	RectangleShape outline;
+	RectangleShape fill;
+	Sprite redGem;
+	Texture tRedGem;
 	
 
 
 public:
 
 	Board();
+	int noInitialMatch(int i, int j);
 	void fillMatrix();
 	void drawBoard(RenderWindow &gameWindow);
 	void swapGems(RenderWindow& gameWindow, Event& event);
@@ -31,9 +40,12 @@ public:
 	bool deleteMatch();
 	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // it doesnt work yet :''v
 	void pullGravity();
-	int noInitialMatch(int i, int j);
+	
 	void drawText(RenderWindow& window, Event& event);
 
+
+	void initBar();              // Inicializa la barra (se llama una vez)
+	void barProgress(RenderWindow& window, Event& event); // Actualiza/dibuja
 	
 	//void deleteGem(RenderWindow& window, Event& event);
 	int getPoints(); int getMoves();

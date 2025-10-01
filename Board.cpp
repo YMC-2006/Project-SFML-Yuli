@@ -157,6 +157,8 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         window.close();
                                         game.runThirdWindow(pointsCounter);
                                     }
+
+
                                     
                                 }
                                 else { // If there is not match the gems go back to their original position
@@ -408,6 +410,51 @@ void Board::setPoints(int p) {
 
 void Board::setMoves(int m) {
     totalMoves = m;
+}
+
+void Board::initBar() {
+    maxPresses = 15;
+    presses = 0;
+    maxWidth = 300.f;
+
+    // Outline
+    outline.setSize(Vector2f(300, 30)); outline.setFillColor(Color::Transparent);
+    outline.setOutlineColor(Color::White); outline.setOutlineThickness(2);
+    outline.setPosition(300, 100);
+
+    // Fill
+    fill.setSize(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(300, 100);
+
+    // Gem
+    tRedGem.loadFromFile("assets/redGem.png");
+    redGem.setTexture(tRedGem);
+    redGem.setPosition(60, 300);
+}
+
+void Board::barProgress(RenderWindow& window, Event& event) {
+    if (event.type == Event::MouseButtonPressed) {
+        Vector2i mousePos = Mouse::getPosition(window);
+        Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+
+        if (redGem.getGlobalBounds().contains(mousePosF)) {
+            if (presses < maxPresses) {
+                presses++;
+                float progress = static_cast<float>(presses) / maxPresses;
+                fill.setSize(Vector2f(maxWidth * progress, 30));
+            }
+
+            // Color changes
+            if (presses == 3) fill.setFillColor(Color::Yellow);
+            if (presses == 6) fill.setFillColor(Color::Red);
+            if (presses == 9) fill.setFillColor(Color::Magenta);
+            if (presses == 15) fill.setFillColor(Color::Cyan);
+        }
+    }
+
+    // Dibujamos siempre (independientemente de si hay click o no)
+    window.draw(redGem);
+    window.draw(outline);
+    window.draw(fill);
 }
 
 void Board::drawText(RenderWindow& window, Event& event) {

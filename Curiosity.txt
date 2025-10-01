@@ -108,4 +108,23 @@ It's all initialized to false.
 It's used only during that count.
 
 When you exit the function, the array disappears.
+-----------------------------------------------------------------------------------------------------------------------
 
+How to make a scrollable window
+To give it a bit of style I decided that the window where the user chose 1 level to play I'll make it a scrollable window
+I didnt know how until I learn about the existance of ⭐⭐VIEW ⭐⭐
+ and the how to make it is pretty simple here are the steps:
+ 1) create your view -> View camera(FloatRect(0, 0, 800, 600)); inside of the main loop you call it like window.setView(camera);
+ *I called it twice to initialice it outside but you can only call it once if you want
+ 2) create variables for the speed of the scrolling and for the limits (topLimit, bottomLimit)
+ 3) Inside of poll loop -> if(event.type == Event::MouseWheelScrolled) camera.move(0, -event.mouseWheelScroll.delta * scrollSpeed)
+ 4) you can make the scroll also work with keyboard keys -> if(Keyboard::IsKeyPressed(Keyboard::Up)) camera.move(0, -scrollSpeed); //Not smooth at all btw
+ if(Keyboard::IsKeyPressed(Keyboard::Down)) camera.move(0 , scrollSpeed);
+
+ Now we add the clamps so we cant go ouside of the image
+ 5) if (pos.y - halfHeight < topLimit)       pos.y = halfHeight;
+        if (pos.y + halfHeight > 1600.f)         pos.y = 1600.f - halfHeight;
+        camera.setCenter(pos);
+        levelsWindow.setView(camera);        
+And thats it!!
+---------------------------------------------------------------------------------------------------------------

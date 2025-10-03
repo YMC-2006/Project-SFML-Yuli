@@ -63,7 +63,7 @@ void Game::runMainWindow() {
     Texture texPurple, texBlue, texYellow, texGreen, texRed;
     texPurple.loadFromFile("assets/purpleGem.png");
     texBlue.loadFromFile("assets/blueGem.png");
-    texYellow.loadFromFile("assets/yellowGem.png");
+    texYellow.loadFromFile("assets/gemBombYellow.png");
     texGreen.loadFromFile("assets/greenGem.png");
     texRed.loadFromFile("assets/redGem.png");
 
@@ -457,7 +457,7 @@ void Game::runMainWindow() {
 void Game::runLVLwindow() {
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
-    Sprite level1Button(txLevel1); level1Button.setPosition(70.f, 160.f); level1Button.setScale(.30f, .30f);
+    Sprite level1Button(txLevel1); level1Button.setPosition(70.f, 180.f); level1Button.setScale(.30f, .30f);
 
     Texture txLevel2; txLevel2.loadFromFile("assets/level2.png");
     Sprite level2Button(txLevel2); level2Button.setPosition(450.f, 350.f); level2Button.setScale(.30f, .30f);
@@ -466,15 +466,15 @@ void Game::runLVLwindow() {
     Sprite level3Button(txLevel3); level3Button.setPosition(90.f, 560.f); level3Button.setScale(.30f, .30f);
 
     Texture txLevel4; txLevel4.loadFromFile("assets/level4.png");
-    Sprite level4Button(txLevel4); level4Button.setPosition(100.f, 60.f); level4Button.setScale(.30f, .30f);
+    Sprite level4Button(txLevel4); level4Button.setPosition(450.f, 800.f); level4Button.setScale(.30f, .30f);
 
     Texture txLevel5; txLevel5.loadFromFile("assets/level5.png");
-    Sprite level5Button(txLevel5); level5Button.setPosition(100.f, 60.f); level5Button.setScale(.30f, .30f);
+    Sprite level5Button(txLevel5); level5Button.setPosition(70.f, 1100.f); level5Button.setScale(.30f, .30f);
 
     //--------------------------------------------------------------------------------------------------------
 
     RenderWindow levelsWindow(VideoMode(800, 600), "Levels");
-    Texture bgTexture; bgTexture.loadFromFile("assets/lvlsBag.png");
+    Texture bgTexture; bgTexture.loadFromFile("assets/backgroundLevel.png");
     Sprite bgSprite(bgTexture);
 
     static SoundBuffer clickBuffer;
@@ -540,7 +540,7 @@ void Game::runLVLwindow() {
       
         levelsWindow.clear();
         levelsWindow.draw(bgSprite);
-        levelsWindow.draw(level1Button); levelsWindow.draw(level2Button); levelsWindow.draw(level3Button);
+        levelsWindow.draw(level1Button); levelsWindow.draw(level2Button); levelsWindow.draw(level3Button); levelsWindow.draw(level4Button); levelsWindow.draw(level5Button);
         levelsWindow.display();
 
     }
@@ -564,6 +564,7 @@ void Game::runSecondWindow() {
     RenderWindow gameWindow(VideoMode(1000, 800), "Game");
     gameWindow.setMouseCursorVisible(false);
     board.initBar();
+   
     while (gameWindow.isOpen()) {
   
         Event event;
@@ -581,17 +582,20 @@ void Game::runSecondWindow() {
             
 
             gameWindow.clear();
-
+           
             gameWindow.draw(spriteBackImg);
             board.drawBoard(gameWindow);
-            board.swapGems(gameWindow, event);
-            board.barProgress(gameWindow, event);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             board.drawText(gameWindow, event);
-
+         
             Vector2i mousePosCursor = Mouse::getPosition(gameWindow);
             spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
             gameWindow.draw(spriteCursor);
+           
+            board.swapGems(gameWindow, event);
+            bool isThereMatch = board.progress();
+            board.barProgress(gameWindow, event, isThereMatch);
+           
 
             gameWindow.display();
 

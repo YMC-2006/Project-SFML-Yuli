@@ -73,6 +73,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
   
     static SoundBuffer clickBuffer;
     static Sound clickSound;
+
     
     clickBuffer.loadFromFile("assets/clickButton.wav");
     clickSound.setBuffer(clickBuffer);
@@ -97,6 +98,9 @@ void Board::swapGems(RenderWindow& window, Event& event) {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (matrix[i][j].getSprite().getGlobalBounds().contains(mousePosF)) {
+                    thereIsProgress = false; // I had to put it here again as false bc, if there a match, the variable stays on true, even if we are then just randomly clicking on another gem
+                    setProgress(thereIsProgress);
+
                     clickSound.play();
                     Gem* clickedGem = &matrix[i][j];
                   
@@ -126,7 +130,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                             int ady = abs(x1 - x2) + abs(y1 - y2);
 
                             if (ady == 1) {
-                               
+
                                 cout << "Swap [" << x1 << "][" << y1 << "] <-> [" << x2 << "][" << y2 << "]" << endl;
 
                                 // Save the positions of the first and second gem clicked
@@ -137,7 +141,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 matrix[x2][y2].getSprite().setPosition(pos1);
 
                                 // swap them on the matrix
-                              
+
                                 swap(matrix[x1][y1], matrix[x2][y2]);
 
 
@@ -146,20 +150,23 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     int gemsMatched = countPoints();
                                     pointsCounter += gemsMatched * 10;
                                     totalMoves -= 1;
-
+                                    thereIsProgress = true;
+                                    setProgress(thereIsProgress);
+                                    
+                                  
                                     // Bucle de cascada
                                     while (deleteMatch()) {
                                         pullGravity();
                                     }
 
 
-                                    if (totalMoves <= 0 ) {
+                                    if (totalMoves <= 0) {
                                         window.close();
                                         game.runThirdWindow(pointsCounter);
                                     }
 
 
-                                    
+
                                 }
                                 else { // If there is not match the gems go back to their original position
 
@@ -168,15 +175,17 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     matrix[x2][y2].getSprite().setPosition(pos2);
                                     errorSound.play();
                                     cout << "No match :v" << endl;
-                                    window.draw(noMatchText);
+                                    //window.draw(noMatchText);
+                                    startShake(window, matrix[x1][y1], matrix[x2][y2], pos1, pos2);
                                 }
                             }
-
+                           
                             // Reset selección
                             selectedGem->setSelected(false);
                             clickedGem->setSelected(false);
                             selectedGem = nullptr;
                         }
+                       
                     }
 
                     return; 
@@ -186,6 +195,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
         }
     }
 }
+
 
 
 int Board::noInitialMatch(int i, int j) {
@@ -224,6 +234,13 @@ bool Board::checkMatchAt(int x, int y) {
     if (verticalCounter >= 3) return true;
 
     return false;
+}
+
+bool Board::progress() {
+    return thereIsProgress;
+}
+void Board::setProgress(bool p) {
+    thereIsProgress = p;
 }
 
 int Board::countPoints() {
@@ -413,7 +430,7 @@ void Board::setMoves(int m) {
 }
 
 void Board::initBar() {
-    maxPresses = 15;
+    maxPresses = 20;
     presses = 0;
     maxWidth = 300.f;
 
@@ -425,18 +442,15 @@ void Board::initBar() {
     // Fill
     fill.setSize(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(300, 100);
 
-    // Gem
-    tRedGem.loadFromFile("assets/redGem.png");
-    redGem.setTexture(tRedGem);
-    redGem.setPosition(60, 300);
+   
 }
 
-void Board::barProgress(RenderWindow& window, Event& event) {
+void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
     if (event.type == Event::MouseButtonPressed) {
         Vector2i mousePos = Mouse::getPosition(window);
         Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
-        if (redGem.getGlobalBounds().contains(mousePosF)) {
+        if (thereIsMatch) {
             if (presses < maxPresses) {
                 presses++;
                 float progress = static_cast<float>(presses) / maxPresses;
@@ -452,7 +466,7 @@ void Board::barProgress(RenderWindow& window, Event& event) {
     }
 
     // Dibujamos siempre (independientemente de si hay click o no)
-    window.draw(redGem);
+    
     window.draw(outline);
     window.draw(fill);
 }
@@ -472,16 +486,14 @@ void Board::drawText(RenderWindow& window, Event& event) {
 
 void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2) {
 
-    const float offSet = 5.f;
-    const int cycles = 3;
-    const Time delay = milliseconds(30);
+   
 
     for (int c = 0; c < cycles; c++) {
         g1.getSprite().setPosition(pos1.x + offSet, pos1.y);
         g2.getSprite().setPosition(pos2.x - offSet, pos2.y);
         window.draw(g1.getSprite()); 
         window.display();
-        sleep(delay);
+        sleep(delay); 
 
         g1.getSprite().setPosition(pos1.x - offSet, pos1.y);
         g2.getSprite().setPosition(pos2.x + offSet, pos2.y);

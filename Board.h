@@ -23,10 +23,13 @@ private:
 	float maxWidth;
 	RectangleShape outline;
 	RectangleShape fill;
-	Sprite redGem;
-	Texture tRedGem;
+	bool thereIsProgress = false;
 	
-
+	
+	const float offSet = 5.f;
+	const int cycles = 3;
+	const Time delay = milliseconds(30);
+	
 
 public:
 
@@ -35,7 +38,7 @@ public:
 	void fillMatrix();
 	void drawBoard(RenderWindow &gameWindow);
 	void swapGems(RenderWindow& gameWindow, Event& event);
-	bool checkMatchAt(int x, int y);
+	bool checkMatchAt(int x, int y); bool progress(); void setProgress(bool p);
 	int countPoints();
 	bool deleteMatch();
 	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // it doesnt work yet :''v
@@ -45,7 +48,7 @@ public:
 
 
 	void initBar();              // Inicializa la barra (se llama una vez)
-	void barProgress(RenderWindow& window, Event& event); // Actualiza/dibuja
+	void barProgress(RenderWindow& window, Event& event,bool thereIsMatch); // Actualiza/dibuja
 	
 	//void deleteGem(RenderWindow& window, Event& event);
 	int getPoints(); int getMoves();

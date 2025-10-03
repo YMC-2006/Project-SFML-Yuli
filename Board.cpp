@@ -30,7 +30,7 @@ void Board::fillMatrix() {
             randType = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
 		
 			matrix[i][j].initGem(randType, textures[randType]);
-			matrix[i][j].getSprite().setPosition(250 + 70.f * i,180 + 70.f * j);
+			matrix[i][j].getSprite().setPosition(250 + 70.f * i,200 + 70.f * j);
 			matrix[i][j].getSprite().setOrigin(
 				matrix[i][j].getSprite().getTexture()->getSize().x / 2.f,
 				matrix[i][j].getSprite().getTexture()->getSize().y / 2.f
@@ -94,12 +94,13 @@ void Board::swapGems(RenderWindow& window, Event& event) {
     if (event.type == Event::MouseButtonPressed) {
         Vector2i mousePos = Mouse::getPosition(window);
         Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-        
+        thereIsProgress = false; // I had to put it here again as false bc, if there a match, the variable stays on true, even if we are then just randomly clicking on another gem
+        setProgress(thereIsProgress); // and it works here and not if the user clicks on the gem because it sets false, if the user clicks on the gem but what if the user click on any other part of the screen
+
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (matrix[i][j].getSprite().getGlobalBounds().contains(mousePosF)) {
-                    thereIsProgress = false; // I had to put it here again as false bc, if there a match, the variable stays on true, even if we are then just randomly clicking on another gem
-                    setProgress(thereIsProgress);
+                  
 
                     clickSound.play();
                     Gem* clickedGem = &matrix[i][j];
@@ -344,7 +345,7 @@ bool Board::deleteMatch()    {
 void Board::pullGravity() {
 
     const float offsetX = 250.f;   // same values as in fillMatrix
-    const float offsetY = 180.f;
+    const float offsetY = 200.f;
     const float tileSize = 70.f;
         
     // Loop through each column
@@ -437,11 +438,11 @@ void Board::initBar() {
     // Outline
     outline.setSize(Vector2f(300, 30)); outline.setFillColor(Color::Transparent);
     outline.setOutlineColor(Color::White); outline.setOutlineThickness(2);
-    outline.setPosition(300, 100);
+    outline.setPosition(100, 500); outline.rotate(-90);
 
     // Fill
-    fill.setSize(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(300, 100);
-
+    fill.setSize(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(100, 500);
+    fill.rotate(-90);
    
 }
 
@@ -476,11 +477,15 @@ void Board::drawText(RenderWindow& window, Event& event) {
 
     Font font;
     font.loadFromFile("arial.ttf");
-    Text points (to_string(getPoints()), font, 40); points.setPosition(450, 46);
-    Text moves (to_string(getMoves()), font, 40); moves.setPosition(760, 46);
+    Text points (to_string(getPoints()), font, 40); points.setPosition(570, 21);
+    Text moves (to_string(getMoves()), font, 40); moves.setPosition(880, 21);
+
+    Texture textureGem; textureGem.loadFromFile("assets/gemBombRed.png");
+    Sprite taskGem(textureGem); taskGem.setScale(.60f, .60f); taskGem.setPosition(200, 80);
 
     window.draw(points);
     window.draw(moves);
+    window.draw(taskGem);
 
 }
 

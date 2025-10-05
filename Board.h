@@ -42,8 +42,9 @@ public:
 	bool deleteMatch();
 	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // it doesnt work yet :''v
 	void pullGravity();
+	void animateGravity(RenderWindow& window);
 	
-	void drawText(RenderWindow& window, Event& event);
+	void drawText(RenderWindow& window);
 
 
 	void initBar();              // Inicializa la barra (se llama una vez)

@@ -157,6 +157,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     // Bucle de cascada
                                     while (deleteMatch()) {
                                         pullGravity();
+                                        //animateGravity(window);
                                     }
 
 
@@ -170,12 +171,12 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 }
                                 else { // If there is not match the gems go back to their original position
 
-                                    animateSwap(matrix[x1][y1], matrix[x2][y2], pos2, pos1, window);
+                                    animateSwap(matrix[x1][y1], matrix[x2][y2], pos1, pos2, window);
                                     swap(matrix[x1][y1], matrix[x2][y2]); // Back to normal 
                                     errorSound.play();
                                     cout << "No match :v" << endl;
                                     //window.draw(noMatchText);
-                                    startShake(window, matrix[x1][y1], matrix[x2][y2], pos1, pos2);
+                                   
                                 }
                             }
                            
@@ -470,7 +471,7 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
     window.draw(fill);
 }
 
-void Board::drawText(RenderWindow& window, Event& event) {
+void Board::drawText(RenderWindow& window) {
 
 
     Font font;
@@ -515,15 +516,23 @@ void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Ve
 
 void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window) {
 
-   
 
-    const float duration = 0.2f;
+    Texture backgroundIMG;
+    backgroundIMG.loadFromFile("assets/backgroundGame3.png");
+    Sprite spriteBackImg(backgroundIMG);
+
+
+
+
+
+
+    const float duration = .4f;
     float elapsed = 0.f;
     Clock clock;
 
     Vector2f start1 = g1.getSprite().getPosition();
     Vector2f start2 = g2.getSprite().getPosition();
-
+    Event event;
     while (elapsed < duration) {
         float dt = clock.restart().asSeconds();
         elapsed += dt;
@@ -537,6 +546,10 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
 
         // draw the frame by frame as they move
         window.clear();
+        window.draw(spriteBackImg);
+        drawText(window);
+        bool isThereMatch = progress();
+        barProgress(window, event, isThereMatch);
         drawBoard(window);  // <-- draw the board
         window.display();
     }
@@ -544,4 +557,58 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
     // set the final positions
     g1.getSprite().setPosition(targetPos2);
     g2.getSprite().setPosition(targetPos1);
+}
+
+void Board::animateGravity(RenderWindow& window) {
+    const float duration = 0.2f; // duración total de la animación
+    Clock clock;
+    float elapsed = 0.f;
+
+    // Guardamos las posiciones iniciales y finales de cada gema
+    vector<Vector2f> startPositions(size * size);
+    vector<Vector2f> endPositions(size * size);
+
+    const float offsetX = 250.f;
+    const float offsetY = 200.f;
+    const float tileSize = 70.f;
+
+    for (int col = 0; col < size; col++) {
+        for (int row = 0; row < size; row++) {
+            startPositions[col * size + row] = matrix[col][row].getSprite().getPosition();
+            endPositions[col * size + row] = Vector2f(
+                offsetX + tileSize * col,
+                offsetY + tileSize * row
+            );
+        }
+    }
+
+    // Bucle de animación
+    while (elapsed < duration) {
+        float dt = clock.restart().asSeconds();
+        elapsed += dt;
+        float t = min(elapsed / duration, 1.f);
+
+        // interpolación suave (ease-out)
+        float smoothT = t * t * (3 - 2 * t);
+
+        for (int col = 0; col < size; col++) {
+            for (int row = 0; row < size; row++) {
+                Vector2f pos = startPositions[col * size + row] +
+                    (endPositions[col * size + row] - startPositions[col * size + row]) * smoothT;
+                matrix[col][row].getSprite().setPosition(pos);
+            }
+        }
+
+        // Dibujar toda la escena (no solo las gemas)
+        window.clear();
+        drawBoard(window); // <--- función que dibuja TODO: fondo, texto, barra, etc.
+        window.display();
+    }
+
+    // Asegurarse que todas las gemas acaben exactamente en su destino
+    for (int col = 0; col < size; col++) {
+        for (int row = 0; row < size; row++) {
+            matrix[col][row].getSprite().setPosition(endPositions[col * size + row]);
+        }
+    }
 }

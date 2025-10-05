@@ -565,11 +565,12 @@ void Game::runSecondWindow() {
 
             if (Keyboard::isKeyPressed(Keyboard::Escape)) gameWindow.close();
             float deltaTime = clock.restart().asSeconds();
+
             gameWindow.clear();
             gameWindow.draw(spriteBackImg);
             board.drawBoard(gameWindow);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            board.drawText(gameWindow, event);
+            board.drawText(gameWindow);
          
            
             board.swapGems(gameWindow, event);

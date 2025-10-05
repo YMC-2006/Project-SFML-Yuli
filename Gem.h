@@ -16,7 +16,7 @@ private:
 	Vector2f startPos;
 	Vector2f endPos;
 	float progress = 0.f; // entre 0.0 y 1.0
-	float speed = 5.f;    // velocidad del movimiento (ajústala)
+	float speed = 5.f;    
 
 
 

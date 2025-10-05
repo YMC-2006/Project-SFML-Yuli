@@ -31,10 +31,12 @@ private:
 public:
 
 	Board();
+	
 	int noInitialMatch(int i, int j);
 	void fillMatrix();
 	void drawBoard(RenderWindow &gameWindow);
 	void swapGems(RenderWindow& gameWindow, Event& event);
+	void animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window);
 	bool checkMatchAt(int x, int y); bool progress(); void setProgress(bool p);
 	int countPoints();
 	bool deleteMatch();

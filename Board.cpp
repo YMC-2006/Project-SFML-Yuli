@@ -73,7 +73,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
   
     static SoundBuffer clickBuffer;
     static Sound clickSound;
-
+   
     
     clickBuffer.loadFromFile("assets/clickButton.wav");
     clickSound.setBuffer(clickBuffer);
@@ -137,13 +137,12 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 // Save the positions of the first and second gem clicked
                                 Vector2f pos1 = matrix[x1][y1].getSprite().getPosition();
                                 Vector2f pos2 = matrix[x2][y2].getSprite().getPosition();
-                                // we swap them
-                                matrix[x1][y1].getSprite().setPosition(pos2);
-                                matrix[x2][y2].getSprite().setPosition(pos1);
+                               
+                              
 
-                                // swap them on the matrix
 
-                                swap(matrix[x1][y1], matrix[x2][y2]);
+                                animateSwap(matrix[x1][y1], matrix[x2][y2], pos1, pos2, window);  // we swap them with movement
+                                swap(matrix[x1][y1], matrix[x2][y2]);  // swap them on the matrix
 
 
                                 if (checkMatchAt(x1, y1) || checkMatchAt(x2, y2)) { // If there is a match we add points and delete the match, then call the gravity func
@@ -161,7 +160,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     }
 
 
-                                    if (totalMoves <= 0) {
+                                    if (totalMoves <= -1) {
                                         window.close();
                                         game.runThirdWindow(pointsCounter);
                                     }
@@ -171,9 +170,8 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 }
                                 else { // If there is not match the gems go back to their original position
 
-                                    swap(matrix[x1][y1], matrix[x2][y2]);
-                                    matrix[x1][y1].getSprite().setPosition(pos1);
-                                    matrix[x2][y2].getSprite().setPosition(pos2);
+                                    animateSwap(matrix[x1][y1], matrix[x2][y2], pos2, pos1, window);
+                                    swap(matrix[x1][y1], matrix[x2][y2]); // Back to normal 
                                     errorSound.play();
                                     cout << "No match :v" << endl;
                                     //window.draw(noMatchText);
@@ -513,4 +511,37 @@ void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Ve
 
     g1.getSprite().setPosition(pos1);
     g2.getSprite().setPosition(pos2);
+}
+
+void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window) {
+
+   
+
+    const float duration = 0.2f;
+    float elapsed = 0.f;
+    Clock clock;
+
+    Vector2f start1 = g1.getSprite().getPosition();
+    Vector2f start2 = g2.getSprite().getPosition();
+
+    while (elapsed < duration) {
+        float dt = clock.restart().asSeconds();
+        elapsed += dt;
+        float t = min(elapsed / duration, 1.f);
+
+        float smoothT = t * t * (3 - 2 * t);
+
+        // move the sprites progresibly
+        g1.getSprite().setPosition(start1 + (targetPos2 - start1) * smoothT);
+        g2.getSprite().setPosition(start2 + (targetPos1 - start2) * smoothT);
+
+        // draw the frame by frame as they move
+        window.clear();
+        drawBoard(window);  // <-- draw the board
+        window.display();
+    }
+
+    // set the final positions
+    g1.getSprite().setPosition(targetPos2);
+    g2.getSprite().setPosition(targetPos1);
 }

@@ -572,16 +572,18 @@ void Game::runSecondWindow() {
             board.drawText(gameWindow, event);
          
            
+            board.swapGems(gameWindow, event);
            
-            bool isThereMatch = board.progress();
-            board.barProgress(gameWindow, event, isThereMatch);
            
 
             Vector2i mousePosCursor = Mouse::getPosition(gameWindow);
             spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
             gameWindow.draw(spriteCursor);
 
-            board.swapGems(gameWindow, event);
+            bool isThereMatch = board.progress();
+            board.barProgress(gameWindow, event, isThereMatch);
+           
+           
 
 
             gameWindow.display();

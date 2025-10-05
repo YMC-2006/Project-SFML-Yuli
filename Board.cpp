@@ -491,7 +491,10 @@ void Board::drawText(RenderWindow& window, Event& event) {
 
 void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2) {
 
-   
+    //Shake animation
+    static float offSet = 5.f;
+    static int cycles = 3;
+    static Time delay = milliseconds(30); // If this generates any erros move it back as atributes with const not static
 
     for (int c = 0; c < cycles; c++) {
         g1.getSprite().setPosition(pos1.x + offSet, pos1.y);

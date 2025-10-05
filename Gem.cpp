@@ -16,9 +16,6 @@ void Gem::initGem(int t, Texture& tex) {
 
 }
 
-void Gem::startShake() {
-
-}
 
 
 int Gem::getType(){
@@ -41,10 +38,6 @@ void Gem::setSelected(bool s) {
 void Gem::setType(int t) {
     type = t;
 
-
-   
 }
-
-
 
 

@@ -519,24 +519,14 @@ void Game::runLVLwindow() {
         if (event.type == Event::MouseButtonPressed) {
             Vector2i mousePos = Mouse::getPosition(levelsWindow);
             Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-            if (level1Button.getGlobalBounds().contains(mousePosF)) {
-                clickSound.play();
-                runSecondWindow();
-            }
-            if (level2Button.getGlobalBounds().contains(mousePosF)) {
-                runSecondWindow();
-            }
-            if (level3Button.getGlobalBounds().contains(mousePosF)) {
-                runSecondWindow();
-            }
+
+
+            if (level1Button.getGlobalBounds().contains(mousePosF))clickSound.play();runSecondWindow();
+            if (level2Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
+            if (level3Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
+            if (level4Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
+            if (level5Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
         }
-
-
-
-
-
-
-
       
         levelsWindow.clear();
         levelsWindow.draw(bgSprite);
@@ -560,7 +550,6 @@ void Game::runSecondWindow() {
     Sprite spriteBackImg(backgroundIMG);
     Clock clock;
 
-   
     RenderWindow gameWindow(VideoMode(1000, 800), "Game");
     gameWindow.setMouseCursorVisible(false);
     board.initBar();
@@ -576,20 +565,14 @@ void Game::runSecondWindow() {
 
             if (Keyboard::isKeyPressed(Keyboard::Escape)) gameWindow.close();
             float deltaTime = clock.restart().asSeconds();
-
-           
-            
-            
-
             gameWindow.clear();
-           
             gameWindow.draw(spriteBackImg);
             board.drawBoard(gameWindow);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             board.drawText(gameWindow, event);
          
            
-            board.swapGems(gameWindow, event);
+           
             bool isThereMatch = board.progress();
             board.barProgress(gameWindow, event, isThereMatch);
            
@@ -597,6 +580,9 @@ void Game::runSecondWindow() {
             Vector2i mousePosCursor = Mouse::getPosition(gameWindow);
             spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
             gameWindow.draw(spriteCursor);
+
+            board.swapGems(gameWindow, event);
+
 
             gameWindow.display();
 

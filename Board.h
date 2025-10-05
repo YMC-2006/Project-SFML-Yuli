@@ -26,9 +26,6 @@ private:
 	bool thereIsProgress = false;
 	
 	
-	const float offSet = 5.f;
-	const int cycles = 3;
-	const Time delay = milliseconds(30);
 	
 
 public:
@@ -53,4 +50,6 @@ public:
 	//void deleteGem(RenderWindow& window, Event& event);
 	int getPoints(); int getMoves();
 	void setPoints(int p); void setMoves(int m);
+
+	
 };

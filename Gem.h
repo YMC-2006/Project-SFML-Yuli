@@ -12,18 +12,26 @@ private:
 	bool moving = false;
 	bool selected = false;
 
+	bool isMoving = false;
+	Vector2f startPos;
+	Vector2f endPos;
+	float progress = 0.f; // entre 0.0 y 1.0
+	float speed = 5.f;    // velocidad del movimiento (ajústala)
+
+
+
 public:
 
 	//Constructor
 	Gem();
 
 	void initGem(int t, Texture& tex); // initialize gem
-	void startShake();
 	int getType();
 	void setType(int t);
 	Sprite& getSprite();
 	bool isSelected();
 	void setSelected(bool s);
+
 
 
 	

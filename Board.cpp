@@ -10,15 +10,26 @@ using namespace sf;
 
 
 int randType;
+Board::Board(const LevelConfig& config) {
+
+    totalMoves = config.moves;
+    targetScore = config.targetScore;
+    this->levelNumber = config.levelNumber;
+    this->hasIceBlocks = config.hasIceBlocks;
+    this->enableBombGems = config.enableBombGems;
+
+    textures[0].loadFromFile("assets/purpleGem.png");
+    textures[1].loadFromFile("assets/yellowGem.png");
+    textures[2].loadFromFile("assets/greenGem.png");
+    textures[3].loadFromFile("assets/blueGem.png");
+    textures[4].loadFromFile("assets/redGem.png");
+    fillMatrix();
+
+}
 
 Board::Board() { //Constructor vacido
 
-	textures[0].loadFromFile("assets/purpleGem.png");
-	textures[1].loadFromFile("assets/yellowGem.png");
-	textures[2].loadFromFile("assets/greenGem.png");
-	textures[3].loadFromFile("assets/blueGem.png");
-	textures[4].loadFromFile("assets/redGem.png");
-	fillMatrix();
+	
 }
 
 
@@ -146,6 +157,27 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
 
                                 if (checkMatchAt(x1, y1) || checkMatchAt(x2, y2)) { // If there is a match we add points and delete the match, then call the gravity func
+                                    
+                                    if (checkMatchAt(x1, y1) && checkMatchAt(x2, y2)) {
+                                        cout << "\n\nDouble match [" << x1 << "][" << y1 << "]\n";
+                                        cout << "Double match [" << x2 << "][" << y2 << "]\n";
+                                        int gemType1 = matrix[x1][y1].getType();
+                                        int gemType2 = matrix[x2][y2].getType();
+                                        cout << "Gem Type: " << gemType1 << endl;
+                                        cout << "Gem Type: " << gemType2 << endl;
+                                    }
+                                    else if (checkMatchAt(x1, y1)) {
+                                        cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
+                                        int gemType = matrix[x1][y1].getType();
+                                        cout << "Gem Type: " << gemType << endl;
+                                    }
+                                    
+                                    else if(checkMatchAt(x2, y2)) {
+                                        cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
+                                        int gemType = matrix[x2][y2].getType();
+                                        cout << "Gem Type: " << gemType << endl;
+                                    }
+                                    
                                     cout << "A match was found :D" << endl;
                                     int gemsMatched = countPoints();
                                     pointsCounter += gemsMatched * 10;
@@ -153,6 +185,9 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     thereIsProgress = true;
                                     setProgress(thereIsProgress);
                                     
+                                    if (gemsMatched > 3) {
+                                        cout << "Match 4+ gems";
+                                    }
                                   
                                     // Bucle de cascada
                                     while (deleteMatch()) {
@@ -161,7 +196,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     }
 
 
-                                    if (totalMoves <= -1) {
+                                    if (totalMoves <= 0) {
                                         window.close();
                                         game.runThirdWindow(pointsCounter);
                                     }
@@ -612,3 +647,15 @@ void Board::animateGravity(RenderWindow& window) {
         }
     }
 }
+
+
+void Board::generateBombGem(Gem& g, int typeGem, Vector2f pos, Texture& tex) {
+    Sprite sprite;
+    bool isBomb = true;
+    if (typeGem == 0) {
+        //Generate a purple bomb gem
+        
+        g.getSprite().setPosition(pos);
+    }
+}
+

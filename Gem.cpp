@@ -26,6 +26,10 @@ Sprite& Gem::getSprite() {
     return sprite;
  }
 
+void Gem::setSprite(Sprite& s) {
+    sprite = s;
+}
+
     
 bool Gem::isSelected() {
     return selected;

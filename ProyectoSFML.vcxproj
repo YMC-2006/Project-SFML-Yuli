@@ -149,6 +149,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Gem.h" />
     <ClInclude Include="IceGem.h" />
+    <ClInclude Include="LevelConfig.h" />
     <ClInclude Include="NormalGem.h" />
   </ItemGroup>
   <ItemGroup>

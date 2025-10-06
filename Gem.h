@@ -29,13 +29,9 @@ public:
 	int getType();
 	void setType(int t);
 	Sprite& getSprite();
+	void setSprite(Sprite& s);
 	bool isSelected();
 	void setSelected(bool s);
-
-
-
-	
-	
 
 	
 };

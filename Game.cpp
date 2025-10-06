@@ -455,6 +455,14 @@ void Game::runMainWindow() {
 
 
 void Game::runLVLwindow() {
+     
+    //Lvl, moves, targetScore, GEM GOAL, Ice blocks, Bomb Gems
+    LevelConfig level1{ 1, 20, 1000, 10, false, false};
+    LevelConfig level2{ 2, 25, 2000, 15, true, false };
+    LevelConfig level3{ 3, 30, 3000, 20, true, true };
+    LevelConfig level4{ 4, 35, 4000, 25, true, true };
+    LevelConfig level5{ 5, 4, 5000, 30, true, true };
+
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
     Sprite level1Button(txLevel1); level1Button.setPosition(70.f, 180.f); level1Button.setScale(.30f, .30f);
@@ -488,17 +496,28 @@ void Game::runLVLwindow() {
     View camera(FloatRect(0, 0, 800, 600));
     levelsWindow.setView(camera);
 
+   
+   
+
     while (levelsWindow.isOpen()) {
         Event event;
         while (levelsWindow.pollEvent(event)) {
-            if (event.type == Event::Closed) levelsWindow.close();
+            if (event.type == Event::Closed)
+                levelsWindow.close();
 
-
-            if (event.type == Event::MouseWheelScrolled) {
+            if (event.type == Event::MouseWheelScrolled)
                 camera.move(0, -event.mouseWheelScroll.delta * scrollSpeed);
-            }
-           
 
+            if (event.type == Event::MouseButtonPressed) {
+                Vector2i mousePos = Mouse::getPosition(levelsWindow);
+                Vector2f mousePosF = levelsWindow.mapPixelToCoords(mousePos);
+
+                if (level1Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level1; runSecondWindow(level1); }
+                if (level2Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level2; runSecondWindow(level2); }
+                if (level3Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level3; runSecondWindow(level3);}
+                if (level4Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level4; runSecondWindow(level4); }
+                if (level5Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level5; runSecondWindow(level5); }
+            }
         }
 
         //in case the user tries to scroll with the keyboard :)
@@ -516,34 +535,27 @@ void Game::runLVLwindow() {
         levelsWindow.setView(camera);        
 
 
-        if (event.type == Event::MouseButtonPressed) {
-            Vector2i mousePos = Mouse::getPosition(levelsWindow);
-            Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-
-
-            if (level1Button.getGlobalBounds().contains(mousePosF))clickSound.play();runSecondWindow();
-            if (level2Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
-            if (level3Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
-            if (level4Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
-            if (level5Button.getGlobalBounds().contains(mousePosF)) runSecondWindow();
-        }
       
         levelsWindow.clear();
         levelsWindow.draw(bgSprite);
-        levelsWindow.draw(level1Button); levelsWindow.draw(level2Button); levelsWindow.draw(level3Button); levelsWindow.draw(level4Button); levelsWindow.draw(level5Button);
+        levelsWindow.draw(level1Button);
+        levelsWindow.draw(level2Button); 
+        levelsWindow.draw(level3Button); 
+        levelsWindow.draw(level4Button); 
+        levelsWindow.draw(level5Button);
         levelsWindow.display();
 
     }
 }
 
 
-void Game::runSecondWindow() {
+void Game::runSecondWindow(const LevelConfig& config) {
 
     Texture cursor;
     cursor.loadFromFile("assets/cursor.png");
     Sprite spriteCursor(cursor);
     
-    Board board;  
+    Board board(config);
 
     Texture backgroundIMG;
     backgroundIMG.loadFromFile("assets/backgroundGame3.png");
@@ -553,6 +565,10 @@ void Game::runSecondWindow() {
     RenderWindow gameWindow(VideoMode(1000, 800), "Game");
     gameWindow.setMouseCursorVisible(false);
     board.initBar();
+
+    // Ejemplo: mostrar info en consola
+    cout << "Starting level " << config.levelNumber << endl;
+    cout << "Moves: " << config.moves << " | Target: " << config.targetScore << endl;
    
     while (gameWindow.isOpen()) {
   
@@ -575,18 +591,11 @@ void Game::runSecondWindow() {
            
             board.swapGems(gameWindow, event);
            
-           
-
             Vector2i mousePosCursor = Mouse::getPosition(gameWindow);
             spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
             gameWindow.draw(spriteCursor);
-
             bool isThereMatch = board.progress();
             board.barProgress(gameWindow, event, isThereMatch);
-           
-           
-
-
             gameWindow.display();
 
         }
@@ -594,6 +603,10 @@ void Game::runSecondWindow() {
 }
 
 void Game::runThirdWindow(int finalScore) {
+
+    
+
+   
 
     //Cursor load Sprite
     Texture cursor;
@@ -645,7 +658,7 @@ void Game::runThirdWindow(int finalScore) {
 
                 if (playAgain.getGlobalBounds().contains(mousePosF)) {
                     returnWindow.close();
-                    runSecondWindow();
+                    runLVLwindow();
                     return;
                     
                 }

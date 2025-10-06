@@ -459,8 +459,8 @@ void Game::runLVLwindow() {
     //Lvl, moves, targetScore, GEM GOAL, Ice blocks, Bomb Gems
     LevelConfig level1{ 1, 20, 1000, 10, false, false};
     LevelConfig level2{ 2, 25, 2000, 15, true, false };
-    LevelConfig level3{ 3, 30, 3000, 20, true, true };
-    LevelConfig level4{ 4, 35, 4000, 25, true, true };
+    LevelConfig level3{ 3, 20, 3000, 20, true, true };
+    LevelConfig level4{ 4, 25, 4000, 25, true, true };
     LevelConfig level5{ 5, 4, 5000, 30, true, true };
 
 

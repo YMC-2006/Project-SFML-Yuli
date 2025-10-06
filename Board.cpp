@@ -465,7 +465,7 @@ void Board::setMoves(int m) {
 }
 
 void Board::initBar() {
-    maxPresses = 20;
+    maxPresses = totalMoves;
     presses = 0;
     maxWidth = 300.f;
 
@@ -493,9 +493,9 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
             }
 
             // Color changes
-            if (presses == 3) fill.setFillColor(Color::Yellow);
-            if (presses == 6) fill.setFillColor(Color::Red);
-            if (presses == 9) fill.setFillColor(Color::Magenta);
+            if (presses == 3) fill.setFillColor(Color::Red);
+            if (presses == 6) fill.setFillColor(Color::Yellow);
+            if (presses == 9) fill.setFillColor(Color::Green);
             if (presses == 15) fill.setFillColor(Color::Cyan);
         }
     }

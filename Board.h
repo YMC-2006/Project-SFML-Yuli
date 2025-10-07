@@ -20,6 +20,7 @@ private:
 	int totalMoves = 0;
 	int targetScore = 0;
 	int levelNumber;
+	int gemTask = 0;
 	bool hasIceBlocks;
 	bool enableBombGems;
 
@@ -61,8 +62,8 @@ public:
 	bool progress(); void setProgress(bool p);
 
 	//void deleteGem(RenderWindow& window, Event& event);
-	int getPoints(); int getMoves();
-	void setPoints(int p); void setMoves(int m);
+	int getPoints(); int getMoves(); int getGemTask();
+	void setPoints(int p); void setMoves(int m); void setTask(int gems);
 
 	
 };

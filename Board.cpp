@@ -14,6 +14,7 @@ Board::Board(const LevelConfig& config) {
 
     totalMoves = config.moves;
     targetScore = config.targetScore;
+    gemTask = config.gemTask;
     this->levelNumber = config.levelNumber;
     this->hasIceBlocks = config.hasIceBlocks;
     this->enableBombGems = config.enableBombGems;
@@ -205,10 +206,10 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
                                 }
                                 else { // If there is not match the gems go back to their original position
-
+                                    errorSound.play();
                                     animateSwap(matrix[x1][y1], matrix[x2][y2], pos1, pos2, window);
                                     swap(matrix[x1][y1], matrix[x2][y2]); // Back to normal 
-                                    errorSound.play();
+                                   
                                     cout << "No match :v" << endl;
                                     //window.draw(noMatchText);
                                    
@@ -464,6 +465,14 @@ void Board::setMoves(int m) {
     totalMoves = m;
 }
 
+int Board::getGemTask() {
+    return gemTask;
+}
+
+void Board::setTask(int gems) {
+    gemTask = gems;
+}
+
 void Board::initBar() {
     maxPresses = totalMoves;
     presses = 0;
@@ -472,10 +481,10 @@ void Board::initBar() {
     // Outline
     outline.setSize(Vector2f(300, 30)); outline.setFillColor(Color::Transparent);
     outline.setOutlineColor(Color::White); outline.setOutlineThickness(2);
-    outline.setPosition(100, 500); outline.rotate(-90);
+    outline.setPosition(100, 550); outline.rotate(-90);
 
     // Fill
-    fill.setSize(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(100, 500);
+    fill.setSize(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(100, 550);
     fill.rotate(-90);
    
 }
@@ -511,14 +520,16 @@ void Board::drawText(RenderWindow& window) {
 
     Font font;
     font.loadFromFile("arial.ttf");
-    Text points (to_string(getPoints()), font, 40); points.setPosition(570, 21);
-    Text moves (to_string(getMoves()), font, 40); moves.setPosition(880, 21);
+    Text points(to_string(getPoints()), font, 40); points.setPosition(570, 20);
+    Text moves(to_string(getMoves()), font, 40); moves.setPosition(880, 20);
+    Text task(to_string(getGemTask()), font, 40); task.setPosition(250, 20);
 
     Texture textureGem; textureGem.loadFromFile("assets/gemBombRed.png");
     Sprite taskGem(textureGem); taskGem.setScale(.60f, .60f); taskGem.setPosition(200, 80);
 
     window.draw(points);
     window.draw(moves);
+    window.draw(task);
     window.draw(taskGem);
 
 }
@@ -553,13 +564,8 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
 
 
     Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame3.png");
+    backgroundIMG.loadFromFile("assets/backgroundGame4.png");
     Sprite spriteBackImg(backgroundIMG);
-
-
-
-
-
 
     const float duration = .4f;
     float elapsed = 0.f;

@@ -457,11 +457,11 @@ void Game::runMainWindow() {
 void Game::runLVLwindow() {
      
     //Lvl, moves, targetScore, GEM GOAL, Ice blocks, Bomb Gems
-    LevelConfig level1{ 1, 20, 1000, 10, false, false};
-    LevelConfig level2{ 2, 25, 2000, 15, true, false };
+    LevelConfig level1{ 1, 20, 1000, 15, false, false};
+    LevelConfig level2{ 2, 25, 2000, 25, true, false };
     LevelConfig level3{ 3, 20, 3000, 20, true, true };
     LevelConfig level4{ 4, 25, 4000, 25, true, true };
-    LevelConfig level5{ 5, 4, 5000, 30, true, true };
+    LevelConfig level5{ 5, 4, 5000, 3, true, true };
 
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
@@ -512,11 +512,11 @@ void Game::runLVLwindow() {
                 Vector2i mousePos = Mouse::getPosition(levelsWindow);
                 Vector2f mousePosF = levelsWindow.mapPixelToCoords(mousePos);
 
-                if (level1Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level1; runSecondWindow(level1); }
-                if (level2Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level2; runSecondWindow(level2); }
-                if (level3Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level3; runSecondWindow(level3);}
-                if (level4Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level4; runSecondWindow(level4); }
-                if (level5Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level5; runSecondWindow(level5); }
+                if (level1Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level1; levelsWindow.close(); runSecondWindow(level1);   }
+                if (level2Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level2; levelsWindow.close();  runSecondWindow(level2);  }
+                if (level3Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level3; levelsWindow.close(); runSecondWindow(level3);   }
+                if (level4Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level4; levelsWindow.close(); runSecondWindow(level4);   }
+                if (level5Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level5; levelsWindow.close(); runSecondWindow(level5);  }
             }
         }
 
@@ -558,7 +558,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
     Board board(config);
 
     Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame3.png");
+    backgroundIMG.loadFromFile("assets/backgroundGame4.png");
     Sprite spriteBackImg(backgroundIMG);
     Clock clock;
 

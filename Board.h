@@ -21,6 +21,7 @@ private:
 	int targetScore = 0;
 	int levelNumber;
 	int gemTask = 0;
+	int gemType = 0;
 	bool hasIceBlocks;
 	bool enableBombGems;
 
@@ -53,8 +54,10 @@ public:
 	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // it doesnt work yet :''v
 	void pullGravity();
 	void animateGravity(RenderWindow& window);
-	
+	void floatingTexts(RenderWindow& window, int matchedGems);
 	void drawText(RenderWindow& window);
+
+	
 
 
 	void initBar(); // Inicialices the bar we call this function only once

@@ -15,6 +15,7 @@ Board::Board(const LevelConfig& config) {
     totalMoves = config.moves;
     targetScore = config.targetScore;
     gemTask = config.gemTask;
+    gemType = config.typeGem;
     this->levelNumber = config.levelNumber;
     this->hasIceBlocks = config.hasIceBlocks;
     this->enableBombGems = config.enableBombGems;
@@ -190,6 +191,8 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         cout << "Match 4+ gems";
                                     }
                                   
+                                    floatingTexts(window, gemsMatched);
+
                                     // Bucle de cascada
                                     while (deleteMatch()) {
                                         pullGravity();
@@ -562,7 +565,6 @@ void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Ve
 
 void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window) {
 
-
     Texture backgroundIMG;
     backgroundIMG.loadFromFile("assets/backgroundGame4.png");
     Sprite spriteBackImg(backgroundIMG);
@@ -665,3 +667,71 @@ void Board::generateBombGem(Gem& g, int typeGem, Vector2f pos, Texture& tex) {
     }
 }
 
+
+void Board::floatingTexts(RenderWindow& window, int matchedGems) {
+    Texture backgroundIMG;
+    backgroundIMG.loadFromFile("assets/backgroundGame4.png");
+    Sprite spriteBackImg(backgroundIMG);
+
+    if (matchedGems <= 3) return; // Only enter if worth it lol
+
+    // Animation Variables :D
+    const float duration = 0.6f;
+    float elapsed = 0.f;
+    Clock clock;
+
+    Texture textAmazing;
+    textAmazing.loadFromFile("assets/amazing.png");
+    Sprite amazing(textAmazing);
+    amazing.setScale(0.5f, 0.5f);
+    amazing.setPosition(250.f, 150.f);
+
+    Texture textGreat;
+    textGreat.loadFromFile("assets/great.png");
+    Sprite great(textGreat);
+    great.setScale(0.5f, 0.5f);
+    great.setPosition(250.f, 150.f);
+
+    // ⚙️ Starting and finish position
+    Vector2f startPos(250.f, 150.f);
+    Vector2f endPos(250.f, 50.f); // goes up a little bit
+
+    // ✨ Animation Lopp
+    while (elapsed < duration) {
+        float dt = clock.restart().asSeconds();
+        elapsed += dt;
+        float t = min(elapsed / duration, 1.f);
+        float smoothT = t * t * (3 - 2 * t);
+
+        // Movement from bottom to top
+        Vector2f pos = startPos + (endPos - startPos) * smoothT;
+
+        // FADE
+        int alpha = static_cast<int>(255 * (1.f - t));
+        if (alpha < 0) alpha = 0;
+
+        if (matchedGems >= 5) {
+            amazing.setPosition(pos);
+            amazing.setColor(Color(255, 255, 255, alpha));
+        }
+        else {
+            great.setPosition(pos);
+            great.setColor(Color(255, 255, 255, alpha));
+        }
+
+         
+        Event event;
+        window.clear();
+
+        window.draw(spriteBackImg);
+        drawText(window);
+        bool isThereMatch = progress();
+        barProgress(window, event, isThereMatch);
+        drawBoard(window);  // <-- draw the board
+
+        if (matchedGems >= 5) window.draw(amazing);
+        else window.draw(great);
+
+        window.display();
+    }
+}

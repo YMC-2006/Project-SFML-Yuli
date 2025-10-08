@@ -457,11 +457,11 @@ void Game::runMainWindow() {
 void Game::runLVLwindow() {
      
     //Lvl, moves, targetScore, GEM GOAL, Ice blocks, Bomb Gems
-    LevelConfig level1{ 1, 20, 1000, 15, false, false};
-    LevelConfig level2{ 2, 25, 2000, 25, true, false };
-    LevelConfig level3{ 3, 20, 3000, 20, true, true };
-    LevelConfig level4{ 4, 25, 4000, 25, true, true };
-    LevelConfig level5{ 5, 4, 5000, 3, true, true };
+    LevelConfig level1{ 1, 15, 1000, 0, 20, false, false};  // Purple Gem
+    LevelConfig level2{ 2, 25, 2000, 1, 25, true, false }; // Yellow Gem
+    LevelConfig level3{ 3, 15, 3000, 2, 20, true, true };  // Green Gem
+    LevelConfig level4{ 4, 25, 4000, 3,30, true, true };  // Blue Gem
+    LevelConfig level5{ 5, 4, 5000, 4, 3, true, true };   // Red Gem
 
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");

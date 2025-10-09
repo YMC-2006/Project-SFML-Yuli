@@ -456,12 +456,12 @@ void Game::runMainWindow() {
 
 void Game::runLVLwindow() {
      
-    //Lvl, moves, targetScore, GEM GOAL, Ice blocks, Bomb Gems
-    LevelConfig level1{ 1, 15, 1000, 0, 20, false, false};  // Purple Gem
-    LevelConfig level2{ 2, 25, 2000, 1, 25, true, false }; // Yellow Gem
-    LevelConfig level3{ 3, 15, 3000, 2, 20, true, true };  // Green Gem
-    LevelConfig level4{ 4, 25, 4000, 3,30, true, true };  // Blue Gem
-    LevelConfig level5{ 5, 4, 5000, 4, 3, true, true };   // Red Gem
+    //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems
+    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false};  // Purple Gem
+    LevelConfig level2{ 2, 25, 2000, 15, 1, true, false }; // Yellow Gem
+    LevelConfig level3{ 3, 15, 3000, 25, 2, true, true };  // Green Gem
+    LevelConfig level4{ 4, 25, 4000, 30, 3, true, true };  // Blue Gem
+    LevelConfig level5{ 5, 4, 5000, 20, 4, true, true };   // Red Gem
 
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
@@ -551,6 +551,8 @@ void Game::runLVLwindow() {
 
 void Game::runSecondWindow(const LevelConfig& config) {
 
+   
+
     Texture cursor;
     cursor.loadFromFile("assets/cursor.png");
     Sprite spriteCursor(cursor);
@@ -558,7 +560,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
     Board board(config);
 
     Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame4.png");
+    backgroundIMG.loadFromFile("assets/backgroundGame5.png");
     Sprite spriteBackImg(backgroundIMG);
     Clock clock;
 
@@ -569,6 +571,8 @@ void Game::runSecondWindow(const LevelConfig& config) {
     // Ejemplo: mostrar info en consola
     cout << "Starting level " << config.levelNumber << endl;
     cout << "Moves: " << config.moves << " | Target: " << config.targetScore << endl;
+    cout << "Type of Gem: " << config.gemTask << endl;
+    cout << "Amount of gems to collect: " << config.gemTaskAmount << endl;
    
     while (gameWindow.isOpen()) {
   

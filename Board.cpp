@@ -15,7 +15,8 @@ Board::Board(const LevelConfig& config) {
     totalMoves = config.moves;
     targetScore = config.targetScore;
     gemTask = config.gemTask;
-    gemType = config.typeGem;
+    gemTaskAmount = config.gemTaskAmount;
+    
     this->levelNumber = config.levelNumber;
     this->hasIceBlocks = config.hasIceBlocks;
     this->enableBombGems = config.enableBombGems;
@@ -43,7 +44,7 @@ void Board::fillMatrix() {
             randType = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
 		
 			matrix[i][j].initGem(randType, textures[randType]);
-			matrix[i][j].getSprite().setPosition(250 + 70.f * i,200 + 70.f * j);
+			matrix[i][j].getSprite().setPosition(250 + 70.f * i,180 + 70.f * j);
 			matrix[i][j].getSprite().setOrigin(
 				matrix[i][j].getSprite().getTexture()->getSize().x / 2.f,
 				matrix[i][j].getSprite().getTexture()->getSize().y / 2.f
@@ -172,12 +173,15 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
                                         int gemType = matrix[x1][y1].getType();
                                         cout << "Gem Type: " << gemType << endl;
+                                       
+
                                     }
                                     
                                     else if(checkMatchAt(x2, y2)) {
                                         cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
                                         int gemType = matrix[x2][y2].getType();
                                         cout << "Gem Type: " << gemType << endl;
+                                        
                                     }
                                     
                                     cout << "A match was found :D" << endl;
@@ -276,7 +280,10 @@ bool Board::checkMatchAt(int x, int y) {
 }
 
 bool Board::progress() {
+
+
     return thereIsProgress;
+   
 }
 void Board::setProgress(bool p) {
     thereIsProgress = p;
@@ -383,7 +390,7 @@ bool Board::deleteMatch()    {
 void Board::pullGravity() {
 
     const float offsetX = 250.f;   // same values as in fillMatrix
-    const float offsetY = 200.f;
+    const float offsetY = 180.f;
     const float tileSize = 70.f;
         
     // Loop through each column
@@ -468,6 +475,10 @@ void Board::setMoves(int m) {
     totalMoves = m;
 }
 
+int Board::getGemTaskAmount() {
+    return gemTaskAmount;
+}
+
 int Board::getGemTask() {
     return gemTask;
 }
@@ -477,7 +488,7 @@ void Board::setTask(int gems) {
 }
 
 void Board::initBar() {
-    maxPresses = totalMoves;
+    maxPresses = gemTaskAmount;
     presses = 0;
     maxWidth = 300.f;
 
@@ -498,6 +509,7 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
         Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
         if (thereIsMatch) {
+           
             if (presses < maxPresses) {
                 presses++;
                 float progress = static_cast<float>(presses) / maxPresses;
@@ -525,10 +537,10 @@ void Board::drawText(RenderWindow& window) {
     font.loadFromFile("arial.ttf");
     Text points(to_string(getPoints()), font, 40); points.setPosition(570, 20);
     Text moves(to_string(getMoves()), font, 40); moves.setPosition(880, 20);
-    Text task(to_string(getGemTask()), font, 40); task.setPosition(250, 20);
+    Text task(to_string(getGemTaskAmount()), font, 40); task.setPosition(250, 20);
 
-    Texture textureGem; textureGem.loadFromFile("assets/gemBombRed.png");
-    Sprite taskGem(textureGem); taskGem.setScale(.60f, .60f); taskGem.setPosition(200, 80);
+   
+    Sprite taskGem(textures[getGemTask()]); taskGem.setScale(.60f, .60f); taskGem.setPosition(150, 80);
 
     window.draw(points);
     window.draw(moves);
@@ -566,7 +578,7 @@ void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Ve
 void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window) {
 
     Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame4.png");
+    backgroundIMG.loadFromFile("assets/backgroundGame5.png");
     Sprite spriteBackImg(backgroundIMG);
 
     const float duration = .4f;
@@ -670,7 +682,7 @@ void Board::generateBombGem(Gem& g, int typeGem, Vector2f pos, Texture& tex) {
 
 void Board::floatingTexts(RenderWindow& window, int matchedGems) {
     Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame4.png");
+    backgroundIMG.loadFromFile("assets/backgroundGame5.png");
     Sprite spriteBackImg(backgroundIMG);
 
     if (matchedGems <= 3) return; // Only enter if worth it lol

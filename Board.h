@@ -21,7 +21,8 @@ private:
 	int targetScore = 0;
 	int levelNumber;
 	int gemTask = 0;
-	int gemType = 0;
+	int gemTaskAmount = 0;
+	
 	bool hasIceBlocks;
 	bool enableBombGems;
 
@@ -51,7 +52,7 @@ public:
 	bool deleteMatch();
 	int countPoints();
 	
-	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // it doesnt work yet :''v
+	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // kinda working but currently out of use
 	void pullGravity();
 	void animateGravity(RenderWindow& window);
 	void floatingTexts(RenderWindow& window, int matchedGems);
@@ -65,7 +66,7 @@ public:
 	bool progress(); void setProgress(bool p);
 
 	//void deleteGem(RenderWindow& window, Event& event);
-	int getPoints(); int getMoves(); int getGemTask();
+	int getPoints(); int getMoves(); int getGemTask(); int getGemTaskAmount();
 	void setPoints(int p); void setMoves(int m); void setTask(int gems);
 
 	

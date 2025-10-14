@@ -102,9 +102,6 @@ void Game::runMainWindow() {
 
 
     // sound for clicking the main buttons
-
-    
-
     SoundBuffer click;
     Sound clickSound;
     click.loadFromFile("assets/clickButton.wav");
@@ -452,8 +449,6 @@ void Game::runMainWindow() {
     }
 }
         
-
-
 void Game::runLVLwindow() {
      
     //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems
@@ -461,7 +456,7 @@ void Game::runLVLwindow() {
     LevelConfig level2{ 2, 25, 2000, 15, 1, true, false }; // Yellow Gem
     LevelConfig level3{ 3, 15, 3000, 25, 2, true, true };  // Green Gem
     LevelConfig level4{ 4, 25, 4000, 30, 3, true, true };  // Blue Gem
-    LevelConfig level5{ 5, 4, 5000, 20, 4, true, true };   // Red Gem
+    LevelConfig level5{ 5, 20, 5000, 20, 4, true, true };   // Red Gem
 
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
@@ -552,7 +547,7 @@ void Game::runLVLwindow() {
 void Game::runSecondWindow(const LevelConfig& config) {
 
    
-
+   
     Texture cursor;
     cursor.loadFromFile("assets/cursor.png");
     Sprite spriteCursor(cursor);
@@ -591,13 +586,12 @@ void Game::runSecondWindow(const LevelConfig& config) {
             board.drawBoard(gameWindow);
             //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             board.drawText(gameWindow);
-         
-           
             board.swapGems(gameWindow, event);
            
             Vector2i mousePosCursor = Mouse::getPosition(gameWindow);
             spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
             gameWindow.draw(spriteCursor);
+           
             bool isThereMatch = board.progress();
             board.barProgress(gameWindow, event, isThereMatch);
             gameWindow.display();

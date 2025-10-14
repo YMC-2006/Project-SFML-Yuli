@@ -16,6 +16,7 @@ Board::Board(const LevelConfig& config) {
     targetScore = config.targetScore;
     gemTask = config.gemTask;
     gemTaskAmount = config.gemTaskAmount;
+
     
     this->levelNumber = config.levelNumber;
     this->hasIceBlocks = config.hasIceBlocks;
@@ -30,11 +31,22 @@ Board::Board(const LevelConfig& config) {
 
 }
 
-Board::Board() { //Constructor vacido
+void Board::drawScene(RenderWindow& window, Event& event) {
 
-	
+
+    Texture backgroundIMG;
+    backgroundIMG.loadFromFile("assets/backgroundGame5.png");
+    Sprite spriteBackImg(backgroundIMG);
+
+  
+    window.draw(spriteBackImg);
+    drawText(window);
+    bool isThereMatch = progress();
+    barProgress(window, event, isThereMatch);
+    drawBoard(window);  // <-- draw the board
+    
+
 }
-
 
 void Board::fillMatrix() {
 
@@ -158,38 +170,25 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 animateSwap(matrix[x1][y1], matrix[x2][y2], pos1, pos2, window);  // we swap them with movement
                                 swap(matrix[x1][y1], matrix[x2][y2]);  // swap them on the matrix
 
+                                bool m1 = checkMatchAt(x1, y1);
+                                bool m2 = checkMatchAt(x2, y2);
+
 
                                 if (checkMatchAt(x1, y1) || checkMatchAt(x2, y2)) { // If there is a match we add points and delete the match, then call the gravity func
                                     
-                                    if (checkMatchAt(x1, y1) && checkMatchAt(x2, y2)) {
-                                        cout << "\n\nDouble match [" << x1 << "][" << y1 << "]\n";
-                                        cout << "Double match [" << x2 << "][" << y2 << "]\n";
-                                        int gemType1 = matrix[x1][y1].getType();
-                                        int gemType2 = matrix[x2][y2].getType();
-                                        cout << "Gem Type: " << gemType1 << endl;
-                                        cout << "Gem Type: " << gemType2 << endl;
-                                    }
-                                    else if (checkMatchAt(x1, y1)) {
-                                        cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
-                                        int gemType = matrix[x1][y1].getType();
-                                        cout << "Gem Type: " << gemType << endl;
-                                       
-
-                                    }
-                                    
-                                    else if(checkMatchAt(x2, y2)) {
-                                        cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
-                                        int gemType = matrix[x2][y2].getType();
-                                        cout << "Gem Type: " << gemType << endl;
-                                        
-                                    }
+                                    updateGemTaskProgress(x1, y1);
+                                    updateGemTaskProgress(x2, y2);
+                                   
                                     
                                     cout << "A match was found :D" << endl;
                                     int gemsMatched = countPoints();
                                     pointsCounter += gemsMatched * 10;
                                     totalMoves -= 1;
+
                                     thereIsProgress = true;
                                     setProgress(thereIsProgress);
+                                   
+
                                     
                                     if (gemsMatched > 3) {
                                         cout << "Match 4+ gems";
@@ -240,6 +239,54 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 }
 
 
+void Board::updateGemTaskProgress(int x, int y) {
+
+
+    if (checkMatchAt(x, y)) {
+        int matchedType = matrix[x][y].getType();
+
+        if (matchedType == gemTask) {
+            int counter = countPoints();
+            gemTaskAmount -= counter;
+
+            if (gemTaskAmount < 0) gemTaskAmount = 0;
+            cout << "Gem task found!! remains " << gemTaskAmount << endl;
+
+        }
+
+
+    }
+}
+
+void Board::updateGemTaskProgressDoubleMatch(int x1, int y1, int x2, int y2) {
+
+
+    if (checkMatchAt(x1, y1) && checkMatchAt(x2,y2)) {
+        int matchedType1 = matrix[x1][y1].getType();
+        int matchedType2 = matrix[x2][y2].getType();
+
+        if (matchedType1 == gemTask) {
+            int counter = countPoints();
+            gemTaskAmount -= counter;
+
+            if (gemTaskAmount < 0) gemTaskAmount = 0;
+            cout << "\nGem task found!! remains " << gemTaskAmount << endl;
+            cout << "Double match!! x1 and y1 was the match"<<endl;
+        }
+        if (matchedType2 == gemTask) {
+
+            int counter = countPoints();
+            gemTaskAmount -= counter;
+
+            if (gemTaskAmount < 0) gemTaskAmount = 0;
+            cout << "\nGem task found!! remains " << gemTaskAmount << endl;
+            cout << "Double match!! x2 and y2 was the match" << endl;
+
+        }
+
+
+    }
+}
 
 int Board::noInitialMatch(int i, int j) {
 	
@@ -279,12 +326,14 @@ bool Board::checkMatchAt(int x, int y) {
     return false;
 }
 
+
+
 bool Board::progress() {
-
-
     return thereIsProgress;
-   
 }
+
+
+
 void Board::setProgress(bool p) {
     thereIsProgress = p;
 }
@@ -488,9 +537,11 @@ void Board::setTask(int gems) {
 }
 
 void Board::initBar() {
+
     maxPresses = gemTaskAmount;
     presses = 0;
     maxWidth = 300.f;
+   
 
     // Outline
     outline.setSize(Vector2f(300, 30)); outline.setFillColor(Color::Transparent);
@@ -504,12 +555,13 @@ void Board::initBar() {
 }
 
 void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
+   
     if (event.type == Event::MouseButtonPressed) {
         Vector2i mousePos = Mouse::getPosition(window);
         Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
         if (thereIsMatch) {
-           
+
             if (presses < maxPresses) {
                 presses++;
                 float progress = static_cast<float>(presses) / maxPresses;
@@ -525,9 +577,10 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
     }
 
     // Dibujamos siempre (independientemente de si hay click o no)
-    
+
     window.draw(outline);
     window.draw(fill);
+  
 }
 
 void Board::drawText(RenderWindow& window) {
@@ -599,13 +652,9 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
         g1.getSprite().setPosition(start1 + (targetPos2 - start1) * smoothT);
         g2.getSprite().setPosition(start2 + (targetPos1 - start2) * smoothT);
 
-        // draw the frame by frame as they move
+        Event event;
         window.clear();
-        window.draw(spriteBackImg);
-        drawText(window);
-        bool isThereMatch = progress();
-        barProgress(window, event, isThereMatch);
-        drawBoard(window);  // <-- draw the board
+        drawScene(window, event);
         window.display();
     }
 
@@ -681,9 +730,7 @@ void Board::generateBombGem(Gem& g, int typeGem, Vector2f pos, Texture& tex) {
 
 
 void Board::floatingTexts(RenderWindow& window, int matchedGems) {
-    Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame5.png");
-    Sprite spriteBackImg(backgroundIMG);
+   
 
     if (matchedGems <= 3) return; // Only enter if worth it lol
 
@@ -731,19 +778,15 @@ void Board::floatingTexts(RenderWindow& window, int matchedGems) {
             great.setColor(Color(255, 255, 255, alpha));
         }
 
-         
         Event event;
+        // Here we draw the whole thing background and the floating great and amazing
         window.clear();
-
-        window.draw(spriteBackImg);
-        drawText(window);
-        bool isThereMatch = progress();
-        barProgress(window, event, isThereMatch);
-        drawBoard(window);  // <-- draw the board
-
+        drawScene(window, event); // dibuja fondo, tablero, textos, barra
         if (matchedGems >= 5) window.draw(amazing);
         else window.draw(great);
-
-        window.display();
+        window.display(); // ✅ mostramos todo junto
+       
+       
+       
     }
 }

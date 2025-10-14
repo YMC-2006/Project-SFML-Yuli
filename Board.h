@@ -14,6 +14,7 @@ private:
 	Gem matrix[size][size];
 	Texture textures[5];
 	Gem* selectedGem = nullptr;
+	
 
 	//Levels mainly
 	int pointsCounter = 0;
@@ -23,13 +24,17 @@ private:
 	int gemTask = 0;
 	int gemTaskAmount = 0;
 	
+	
+	
 	bool hasIceBlocks;
 	bool enableBombGems;
 
 	//Bar progress
 	int presses;
 	int maxPresses;
+	float currentProgress = 0.f;  // nivel visual
 	float maxWidth;
+	int gemTaskProgress = 0;      // cuántas gemas lleva
 	RectangleShape outline;
 	RectangleShape fill;
 	bool thereIsProgress = false;
@@ -40,7 +45,7 @@ private:
 public:
 
 	Board(const LevelConfig& config);
-	Board();
+	void drawScene(RenderWindow& window, Event& event);
 	
 	int noInitialMatch(int i, int j);
 	void fillMatrix();
@@ -51,6 +56,7 @@ public:
 	void generateBombGem(Gem& g1, int typeGem, Vector2f pos, Texture& tex);
 	bool deleteMatch();
 	int countPoints();
+	void updateGemTaskProgress(int x, int y); void updateGemTaskProgressDoubleMatch(int x1, int y1, int x2, int y2);
 	
 	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // kinda working but currently out of use
 	void pullGravity();
@@ -64,6 +70,7 @@ public:
 	void initBar(); // Inicialices the bar we call this function only once
 	void barProgress(RenderWindow& window, Event& event,bool thereIsMatch); // Actualiza/dibuja
 	bool progress(); void setProgress(bool p);
+	
 
 	//void deleteGem(RenderWindow& window, Event& event);
 	int getPoints(); int getMoves(); int getGemTask(); int getGemTaskAmount();

@@ -8,4 +8,8 @@ using namespace sf;
 
 class BombGem: public Gem {
 
+private:
+
+public:
+
 };

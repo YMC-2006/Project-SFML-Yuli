@@ -9,4 +9,8 @@ using namespace sf;
 
 class IceGem : public Gem {
 
+private:
+public:
+
+
 };

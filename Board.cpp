@@ -35,7 +35,9 @@ void Board::drawScene(RenderWindow& window, Event& event) {
 
 
     Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame5.png");
+    if (!backgroundIMG.loadFromFile("assets/backgroundGame5.png")) {
+        throw runtime_error("ERROR! couldnt load the bg image");
+    }
     Sprite spriteBackImg(backgroundIMG);
 
   
@@ -176,9 +178,32 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
                                 if (checkMatchAt(x1, y1) || checkMatchAt(x2, y2)) { // If there is a match we add points and delete the match, then call the gravity func
                                     
-                                    updateGemTaskProgress(x1, y1);
-                                    updateGemTaskProgress(x2, y2);
-                                   
+
+                                    if (m1 && m2) {
+                                        cout << "\n\nDouble match [" << x1 << "][" << y1 << "]\n";
+                                        cout << "Double match [" << x2 << "][" << y2 << "]\n";
+                                        int gemType1 = matrix[x1][y1].getType();
+                                        int gemType2 = matrix[x2][y2].getType();
+                                        cout << "Gem Type: " << gemType1 << endl;
+                                        cout << "Gem Type: " << gemType2 << endl;
+
+                                       updateGemTaskProgress(x2,y2);
+                                        
+                                    }
+                                    else if (m1) {
+                                        cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
+                                        int gemType = matrix[x1][y1].getType();
+                                        cout << "Gem Type: " << gemType << endl;
+                                        updateGemTaskProgress( x1,y1);
+
+                                    }
+                                    
+                                    else if(m2) {
+                                        cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
+                                        int gemType = matrix[x2][y2].getType();
+                                        cout << "Gem Type: " << gemType << endl;
+                                        updateGemTaskProgress( x2,y2);
+                                    }
                                     
                                     cout << "A match was found :D" << endl;
                                     int gemsMatched = countPoints();
@@ -241,7 +266,8 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
 void Board::updateGemTaskProgress(int x, int y) {
 
-
+    Texture text; text.loadFromFile("assets/taskAcomplished.png");
+    Sprite purpleCheck; purpleCheck.setTexture(text);  purpleCheck.setPosition(250, 20);
     if (checkMatchAt(x, y)) {
         int matchedType = matrix[x][y].getType();
 
@@ -249,7 +275,10 @@ void Board::updateGemTaskProgress(int x, int y) {
             int counter = countPoints();
             gemTaskAmount -= counter;
 
-            if (gemTaskAmount < 0) gemTaskAmount = 0;
+            if (gemTaskAmount < 0) {
+                gemTaskAmount = 0;
+              
+            }
             cout << "Gem task found!! remains " << gemTaskAmount << endl;
 
         }
@@ -781,10 +810,10 @@ void Board::floatingTexts(RenderWindow& window, int matchedGems) {
         Event event;
         // Here we draw the whole thing background and the floating great and amazing
         window.clear();
-        drawScene(window, event); // dibuja fondo, tablero, textos, barra
+        drawScene(window, event); 
         if (matchedGems >= 5) window.draw(amazing);
         else window.draw(great);
-        window.display(); // ✅ mostramos todo junto
+        window.display();
        
        
        

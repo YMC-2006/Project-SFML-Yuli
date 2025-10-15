@@ -56,7 +56,7 @@ public:
 	void generateBombGem(Gem& g1, int typeGem, Vector2f pos, Texture& tex);
 	bool deleteMatch();
 	int countPoints();
-	void updateGemTaskProgress(int x, int y); void updateGemTaskProgressDoubleMatch(int x1, int y1, int x2, int y2);
+	void updateGemTaskProgress( int x, int y); void updateGemTaskProgressDoubleMatch(int x1, int y1, int x2, int y2);
 	
 	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // kinda working but currently out of use
 	void pullGravity();

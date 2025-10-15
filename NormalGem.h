@@ -8,4 +8,12 @@ using namespace sf;
 
 class NormalGem : public Gem {
 
+
+private:
+
+
+
+public:
+
+
 };

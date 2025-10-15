@@ -8,6 +8,10 @@ Gem::Gem() {
     type = 0;
 }
 
+Gem::~Gem() {
+
+}   
+
 
 void Gem::initGem(int t, Texture& tex) {
     type = t;

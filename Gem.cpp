@@ -5,6 +5,8 @@ using namespace sf;
 using namespace std;
 
 Gem::Gem() {
+
+
     type = 0;
 }
 

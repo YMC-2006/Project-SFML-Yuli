@@ -210,8 +210,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     pointsCounter += gemsMatched * 10;
                                     totalMoves -= 1;
 
-                                    thereIsProgress = true;
-                                    setProgress(thereIsProgress);
+                                   
                                    
 
                                     
@@ -264,27 +263,30 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 }
 
 
-void Board::updateGemTaskProgress(int x, int y) {
+bool Board::updateGemTaskProgress(int x, int y) {
 
-    Texture text; text.loadFromFile("assets/taskAcomplished.png");
-    Sprite purpleCheck; purpleCheck.setTexture(text);  purpleCheck.setPosition(250, 20);
+    
     if (checkMatchAt(x, y)) {
         int matchedType = matrix[x][y].getType();
 
         if (matchedType == gemTask) {
-            int counter = countPoints();
-            gemTaskAmount -= counter;
+            barPoints = countPoints();
+            gemTaskAmount -= barPoints;
 
             if (gemTaskAmount < 0) {
                 gemTaskAmount = 0;
               
             }
             cout << "Gem task found!! remains " << gemTaskAmount << endl;
-
+            thereIsProgress = true;
+            setProgress(thereIsProgress);
         }
 
 
     }
+
+    return thereIsProgress;
+
 }
 
 void Board::updateGemTaskProgressDoubleMatch(int x1, int y1, int x2, int y2) {
@@ -567,7 +569,7 @@ void Board::setTask(int gems) {
 
 void Board::initBar() {
 
-    maxPresses = gemTaskAmount;
+    maxProgress = gemTaskAmount;
     presses = 0;
     maxWidth = 300.f;
    
@@ -585,23 +587,32 @@ void Board::initBar() {
 
 void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
    
+    Color Green(67, 219, 38);
+    Color Purple(150, 32, 216);
+    Color Yellow(242, 158, 26);
+   
     if (event.type == Event::MouseButtonPressed) {
         Vector2i mousePos = Mouse::getPosition(window);
         Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-
+       
         if (thereIsMatch) {
+          
+            if (presses < maxProgress) {
 
-            if (presses < maxPresses) {
-                presses++;
-                float progress = static_cast<float>(presses) / maxPresses;
+                presses += barPoints;
+                if (presses > maxProgress) presses = maxProgress;
+
+                float progress = static_cast<float>(presses) / maxProgress;
                 fill.setSize(Vector2f(maxWidth * progress, 30));
             }
 
             // Color changes
-            if (presses == 3) fill.setFillColor(Color::Red);
-            if (presses == 6) fill.setFillColor(Color::Yellow);
-            if (presses == 9) fill.setFillColor(Color::Green);
-            if (presses == 15) fill.setFillColor(Color::Cyan);
+            if (levelNumber == 1) fill.setFillColor(Purple);
+            if (levelNumber == 2) fill.setFillColor(Yellow);
+            if (levelNumber == 3) fill.setFillColor(Green);
+            if (levelNumber == 4) fill.setFillColor(Color::Cyan);
+            if (levelNumber == 5) fill.setFillColor(Color::Red);
+            cout << "Points from this match: " << barPoints << endl;
         }
     }
 

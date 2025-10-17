@@ -1,13 +1,13 @@
 ﻿#include <SFML/Graphics.hpp>
 #include "Gem.h"
+#include "Board.h"
 #include <cstdlib> // rand
 using namespace sf;
 using namespace std;
 
 Gem::Gem() {
 
-
-    type = 0;
+   
 }
 
 Gem::~Gem() {

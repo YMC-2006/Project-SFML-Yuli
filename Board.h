@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "Gem.h"
+#include "LevelConfig.h"
 using namespace std;
 using namespace sf;
 
@@ -11,7 +12,7 @@ private:
 	bool firstClick = false;
 	int x1, y1; // coords of the first click
 	static const int size = 8;
-	Gem matrix[size][size];
+	Gem* matrix[size][size];
 	Texture textures[5];
 	Gem* selectedGem = nullptr;
 	
@@ -31,8 +32,8 @@ private:
 
 	//Bar progress
 	
-	int presses;
-	int maxProgress;
+	int currentProgressPoints;
+	int targetProgressPoints;
 	float maxWidth;
 	int barPoints;
 	RectangleShape outline;
@@ -54,9 +55,10 @@ public:
 	void swapGems(RenderWindow& gameWindow, Event& event);
 	void animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window);
 	void generateBombGem(Gem& g1, int typeGem, Vector2f pos, Texture& tex);
+	void generateIceGems();
 	bool deleteMatch();
 	int countPoints();
-	bool updateGemTaskProgress();
+	
 	
 	void startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2); // kinda working but currently out of use
 	void pullGravity();
@@ -68,11 +70,11 @@ public:
 
 
 	void initBar(); // Inicialices the bar we call this function only once
-	void barProgress(RenderWindow& window, Event& event,bool thereIsMatch); // Actualiza/dibuja
-	bool progress(); void setProgress(bool p);
+	void updateGemTaskProgress(); // sets the thereIsMatch variable
+	void barProgress(RenderWindow& window, Event& event,bool thereIsMatch); // Updates and draws the bar progress
+	bool progress(); void setProgress(bool p); // sets and gets
 	
 
-	//void deleteGem(RenderWindow& window, Event& event);
 	int getPoints(); int getMoves(); int getGemTask(); int getGemTaskAmount();
 	void setPoints(int p); void setMoves(int m); void setTask(int gems);
 

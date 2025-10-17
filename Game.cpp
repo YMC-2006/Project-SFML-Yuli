@@ -456,7 +456,7 @@ void Game::runLVLwindow() {
     LevelConfig level2{ 2, 25, 2000, 15, 1, true, false }; // Yellow Gem
     LevelConfig level3{ 3, 15, 3000, 25, 2, true, true };  // Green Gem
     LevelConfig level4{ 4, 25, 4000, 30, 3, true, true };  // Blue Gem
-    LevelConfig level5{ 5, 20, 5000, 20, 4, true, true };   // Red Gem
+    LevelConfig level5{ 5, 10, 5000, 20, 4, true, true };   // Red Gem
 
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
@@ -508,7 +508,7 @@ void Game::runLVLwindow() {
                 Vector2f mousePosF = levelsWindow.mapPixelToCoords(mousePos);
 
                 if (level1Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level1; levelsWindow.close(); runSecondWindow(level1);   }
-                if (level2Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level2; levelsWindow.close();  runSecondWindow(level2);  }
+                if (level2Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level2; levelsWindow.close(); runSecondWindow(level2);  }
                 if (level3Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level3; levelsWindow.close(); runSecondWindow(level3);   }
                 if (level4Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level4; levelsWindow.close(); runSecondWindow(level4);   }
                 if (level5Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level5; levelsWindow.close(); runSecondWindow(level5);  }

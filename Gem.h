@@ -9,6 +9,7 @@ protected:
 
 	int type; // 0 = purple, 1 = yellow, 2 = green, 3 = blue, 4 = red
 	Sprite sprite;
+	//Texture textures[5];
 	bool selected = false;
 
 
@@ -24,7 +25,7 @@ public:
 	void setType(int t);
 	Sprite& getSprite();
 	void setSprite(Sprite& s);
-	bool isSelected();
+	virtual bool isSelected();
 	void setSelected(bool s);
 
 	

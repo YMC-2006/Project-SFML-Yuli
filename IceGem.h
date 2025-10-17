@@ -11,7 +11,12 @@ class IceGem : public Gem {
 
 private:
 
+	Sprite sprite;
+	Texture textures[5];
+
 public:
 
+	IceGem();
+	~IceGem();
 
 };

@@ -5,6 +5,8 @@
 #include "Game.h"
 #include "board.h"
 #include "Gem.h"
+#include "IceGem.h"
+#include "NormalGem.h"
 using namespace std;
 using namespace sf;
 
@@ -12,6 +14,7 @@ using namespace sf;
 int randType;
 Board::Board(const LevelConfig& config) {
 
+   
     totalMoves = config.moves;
     targetScore = config.targetScore;
     gemTask = config.gemTask;
@@ -27,7 +30,19 @@ Board::Board(const LevelConfig& config) {
     textures[2].loadFromFile("assets/greenGem.png");
     textures[3].loadFromFile("assets/blueGem.png");
     textures[4].loadFromFile("assets/redGem.png");
+
     fillMatrix();
+   
+}
+
+void Board::generateIceGems() {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            matrix[0][0] = new IceGem();
+           
+            
+        }
+    }
 
 }
 
@@ -40,13 +55,19 @@ void Board::drawScene(RenderWindow& window, Event& event) {
     }
     Sprite spriteBackImg(backgroundIMG);
 
-  
+    Texture cursor;
+    cursor.loadFromFile("assets/cursor.png");
+    Sprite spriteCursor(cursor);
+    Vector2i mousePosCursor = Mouse::getPosition(window);
+    spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
+   
+
     window.draw(spriteBackImg);
     drawText(window);
     bool isThereMatch = progress();
     barProgress(window, event, isThereMatch);
     drawBoard(window);  // <-- draw the board
-    
+    window.draw(spriteCursor);
 
 }
 
@@ -54,14 +75,14 @@ void Board::fillMatrix() {
 
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-		
+            matrix[i][j] = new Gem();
             randType = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
 		
-			matrix[i][j].initGem(randType, textures[randType]);
-			matrix[i][j].getSprite().setPosition(250 + 70.f * i,180 + 70.f * j);
-			matrix[i][j].getSprite().setOrigin(
-				matrix[i][j].getSprite().getTexture()->getSize().x / 2.f,
-				matrix[i][j].getSprite().getTexture()->getSize().y / 2.f
+            matrix[i][j]->initGem(randType, textures[randType]);
+			matrix[i][j]->getSprite().setPosition(250 + 70.f * i,180 + 70.f * j);
+			matrix[i][j]->getSprite().setOrigin(
+				matrix[i][j]->getSprite().getTexture()->getSize().x / 2.f,
+				matrix[i][j]->getSprite().getTexture()->getSize().y / 2.f
 			); //now the center of the gem is the origin and not a corner
 		}		
 	}
@@ -72,24 +93,23 @@ void Board::drawBoard(RenderWindow &window) {
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
 
-            if (matrix[i][j].getType() == -1) {
+            if (matrix[i][j]->getType() == -1) {
                 continue;
             }
 			
-			
-			if (matrix[i][j].isSelected()) {
+			if (matrix[i][j]->isSelected()) {
                
-				matrix[i][j].getSprite().setColor(Color(200, 200, 255)); // it darkess the color of the gem
-				matrix[i][j].getSprite().setScale(.80f, .80f);
+				matrix[i][j]->getSprite().setColor(Color(200, 200, 255)); // it darkess the color of the gem
+				matrix[i][j]->getSprite().setScale(.80f, .80f);
 				
 			}
 			else {
                
-				matrix[i][j].getSprite().setScale(.70f, .70f);
-				matrix[i][j].getSprite().setColor(Color::White);
+				matrix[i][j]->getSprite().setScale(.70f, .70f);
+				matrix[i][j]->getSprite().setColor(Color::White);
 			}
 
-            window.draw(matrix[i][j].getSprite());
+            window.draw(matrix[i][j]->getSprite());
 		}
 	}
 }
@@ -127,11 +147,11 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (matrix[i][j].getSprite().getGlobalBounds().contains(mousePosF)) {
+                if (matrix[i][j]->getSprite().getGlobalBounds().contains(mousePosF)) {
                   
 
                     clickSound.play();
-                    Gem* clickedGem = &matrix[i][j];
+                    Gem* clickedGem = matrix[i][j];
                   
                     // There's still no selected gem, so we select the one the user just clicked on
                     if (selectedGem == nullptr) {
@@ -163,13 +183,13 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 cout << "Swap [" << x1 << "][" << y1 << "] <-> [" << x2 << "][" << y2 << "]" << endl;
 
                                 // Save the positions of the first and second gem clicked
-                                Vector2f pos1 = matrix[x1][y1].getSprite().getPosition();
-                                Vector2f pos2 = matrix[x2][y2].getSprite().getPosition();
+                                Vector2f pos1 = matrix[x1][y1]->getSprite().getPosition();
+                                Vector2f pos2 = matrix[x2][y2]->getSprite().getPosition();
                                
                               
 
 
-                                animateSwap(matrix[x1][y1], matrix[x2][y2], pos1, pos2, window);  // we swap them with movement
+                                animateSwap(*matrix[x1][y1], *matrix[x2][y2], pos1, pos2, window);  // we swap them with movement
                                 swap(matrix[x1][y1], matrix[x2][y2]);  // swap them on the matrix
 
                                 bool m1 = checkMatchAt(x1, y1);
@@ -209,18 +229,16 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     totalMatched += gemsMatched;
                                     pointsCounter += gemsMatched * 10;
                                     totalMoves -= 1;
-                                    if (gemsMatched > 3) {
-                                        cout << "Match 4+ gems";
-                                    }   
+                                      
                                   
                                     floatingTexts(window, gemsMatched);
 
-                                    // Bucle de cascada
+                                    // Cascade Loop
                                     while (deleteMatch()) {
                                         pullGravity();
                                         animateGravity(window);
 
-                                        // Verificamos nuevos matches después de cada caída
+                                        // Check for new matches after the gravity falls
                                         int cascadeMatch = countPoints();
                                         if (cascadeMatch > 0) {
                                             totalMatched += cascadeMatch;
@@ -232,6 +250,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
 
                                     }
+
                                     cout << "Total gems matched (including cascades): " << totalMatched << endl;
 
 
@@ -245,7 +264,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 }
                                 else { // If there is not match the gems go back to their original position
                                     errorSound.play();
-                                    animateSwap(matrix[x1][y1], matrix[x2][y2], pos1, pos2, window);
+                                    animateSwap(*matrix[x1][y1], *matrix[x2][y2], pos1, pos2, window);
                                     swap(matrix[x1][y1], matrix[x2][y2]); // Back to normal 
                                    
                                     cout << "No match :v" << endl;
@@ -271,14 +290,14 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 }
 
 
-bool Board::updateGemTaskProgress() {
+void Board::updateGemTaskProgress() {
 
     
     int gemsFound = 0;
 
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            int type = matrix[i][j].getType();
+            int type = matrix[i][j]->getType();
 
             if (type == -1) continue;
 
@@ -297,8 +316,7 @@ bool Board::updateGemTaskProgress() {
         thereIsProgress = true;
         setProgress(thereIsProgress);
 
-        cout << "Gem task progress (cascade included): " << gemsFound
-            << "Remaining: " << gemTaskAmount << endl;
+        cout << "Gem task progress (cascade included): " << gemsFound<< endl;
     }
 
 }
@@ -313,9 +331,9 @@ int Board::noInitialMatch(int i, int j) {
 		randType = rand() % 5;  // rand num between 0 and 4
 	} while (
 		// horizontal check to the left (two equals in a row)
-		(j >= 2 && matrix[i][j - 1].getType() == randType && matrix[i][j - 2].getType() == randType) ||
+		(j >= 2 && matrix[i][j - 1]->getType() == randType && matrix[i][j - 2]->getType() == randType) ||
 		// vertical check up (two equals in a row)
-		(i >= 2 && matrix[i - 1][j].getType() == randType && matrix[i - 2][j].getType() == randType)
+		(i >= 2 && matrix[i - 1][j]->getType() == randType && matrix[i - 2][j]->getType() == randType)
 		);
 
 	return randType;
@@ -323,21 +341,21 @@ int Board::noInitialMatch(int i, int j) {
 
 bool Board::checkMatchAt(int x, int y) {
     
-    int gemType = matrix[x][y].getType();
+    int gemType = matrix[x][y]->getType();
     if (gemType == -1) return false;
 
     int horizontalCounter = 1, verticalCounter = 1;
 
     // Horizontal Left
-    for (int j = y - 1; j >= 0 && matrix[x][j].getType() == gemType; j--) horizontalCounter++;
+    for (int j = y - 1; j >= 0 && matrix[x][j]->getType() == gemType; j--) horizontalCounter++;
     // Horizontal Right
-    for (int j = y + 1; j < size && matrix[x][j].getType() == gemType; j++) horizontalCounter++;
+    for (int j = y + 1; j < size && matrix[x][j]->getType() == gemType; j++) horizontalCounter++;
     if (horizontalCounter >= 3) return true;
 
     // Vertical Top
-    for (int i = x - 1; i >= 0 && matrix[i][y].getType() == gemType; i--) verticalCounter++;
+    for (int i = x - 1; i >= 0 && matrix[i][y]->getType() == gemType; i--) verticalCounter++;
     // Vertical Bottom
-    for (int i = x + 1; i < size && matrix[i][y].getType() == gemType; i++) verticalCounter++;
+    for (int i = x + 1; i < size && matrix[i][y]->getType() == gemType; i++) verticalCounter++;
     if (verticalCounter >= 3) return true;
 
     return false;
@@ -361,15 +379,15 @@ int Board::countPoints() {
 
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            int currentType = matrix[i][j].getType();
+            int currentType = matrix[i][j]->getType();
             if (currentType == -1) continue;
 
             // ---- Horizontal ----
-            if (j < size - 2 && matrix[i][j + 1].getType() == currentType &&
-                matrix[i][j + 2].getType() == currentType)
+            if (j < size - 2 && matrix[i][j + 1]->getType() == currentType &&
+                matrix[i][j + 2]->getType() == currentType)
             {
                 int k = j;
-                while (k < size && matrix[i][k].getType() == currentType) {
+                while (k < size && matrix[i][k]->getType() == currentType) {
                     if (!marked[i][k]) {        //  dont count again
                         marked[i][k] = true;
                         totalGems++;
@@ -379,11 +397,11 @@ int Board::countPoints() {
             }
 
             // ---- Vertical ----
-            if (i < size - 2 && matrix[i + 1][j].getType() == currentType &&
-                matrix[i + 2][j].getType() == currentType)
+            if (i < size - 2 && matrix[i + 1][j]->getType() == currentType &&
+                matrix[i + 2][j]->getType() == currentType)
             {
                 int k = i;
-                while (k < size && matrix[k][j].getType() == currentType) {
+                while (k < size && matrix[k][j]->getType() == currentType) {
                     if (!marked[k][j]) {        //  dont count again
                         marked[k][j] = true;
                         totalGems++;
@@ -408,11 +426,11 @@ bool Board::deleteMatch()    {
     for (int i = 0; i < size; i++) {
         int j = 0;
         while (j < size) {
-            int currentGem = matrix[i][j].getType();
+            int currentGem = matrix[i][j]->getType();
             if (currentGem == -1) { j++; continue; }
 
             int start = j;
-            while (j + 1 < size && matrix[i][j + 1].getType() == currentGem) j++;
+            while (j + 1 < size && matrix[i][j + 1]->getType() == currentGem) j++;
             int len = j - start + 1;
 
             if (len >= 3) {
@@ -430,11 +448,11 @@ bool Board::deleteMatch()    {
     for (int j = 0; j < size; j++) {
         int i = 0;
         while (i < size) {
-            int currentGem = matrix[i][j].getType();
+            int currentGem = matrix[i][j]->getType();
             if (currentGem == -1) { i++; continue; }
 
             int start = i;
-            while (i + 1 < size && matrix[i + 1][j].getType() == currentGem) i++;
+            while (i + 1 < size && matrix[i + 1][j]->getType() == currentGem) i++;
             int len = i - start + 1;
 
             if (len >= 3) {
@@ -448,7 +466,7 @@ bool Board::deleteMatch()    {
 
     // Delete
     for (auto& p : toDelete)
-        matrix[p.first][p.second].setType(-1);
+        matrix[p.first][p.second]->setType(-1);
 
     return found;
 }
@@ -466,20 +484,20 @@ void Board::pullGravity() {
 
         // --- Download existing gems ---
         for (int row = size - 1; row >= 0; row--) {
-            if (matrix[col][row].getType() != -1) {
+            if (matrix[col][row]->getType() != -1) {
                 // If we find a valid gem and there's space below it
                 if (row != emptySpot) {
                     // We use swap to move the gem and avoid duplicates
                     swap(matrix[col][emptySpot], matrix[col][row]);
 
                     // We update the visual position
-                    matrix[col][emptySpot].getSprite().setPosition(
+                    matrix[col][emptySpot]->getSprite().setPosition(
                         offsetX + tileSize * col,
                         offsetY + tileSize * emptySpot
                     );
 
                     // We leave the top position marked as empty
-                    matrix[col][row].setType(-1);
+                    matrix[col][row]->setType(-1);
                 }
                 emptySpot--;
             }
@@ -490,13 +508,13 @@ void Board::pullGravity() {
             int newType = rand() % 5; // number of gem types
 
             // Set the new type (only the value and transparency change)
-            matrix[col][row].setType(newType);
+            matrix[col][row]->setType(newType);
 
             // Assign the correct texture
-            matrix[col][row].getSprite().setTexture(textures[newType]);
+            matrix[col][row]->getSprite().setTexture(textures[newType]);
 
             // Screen position
-            matrix[col][row].getSprite().setPosition(
+            matrix[col][row]->getSprite().setPosition(
                 offsetX + tileSize * col,
                 offsetY + tileSize * row
             );
@@ -504,26 +522,6 @@ void Board::pullGravity() {
     }
 }
 
-/*void Board::deleteGem(RenderWindow& window, Event& event) {
-
-    if (event.type == Event::MouseButtonPressed) {
-        Vector2i mousePos = Mouse::getPosition(window);
-        Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-        
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (matrix[i][j].getSprite().getGlobalBounds().contains(mousePosF)) {
-                    matrix[i][j].getSprite().setPosition(-1213.f,-4324.f);
-                    cout << "Deleted gem ["<<i<<"]["<<j<<"]"<<endl;
-
-                }
-            }
-        }
-
-    }
-
-}*/
 
 int Board::getPoints() {
     return pointsCounter;
@@ -555,8 +553,8 @@ void Board::setTask(int gems) {
 
 void Board::initBar() {
 
-    maxProgress = gemTaskAmount;
-    presses = 0;
+    targetProgressPoints = gemTaskAmount;
+    currentProgressPoints = 0;
     maxWidth = 300.f;
    
 
@@ -583,12 +581,12 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
        
         if (thereIsMatch) {
           
-            if (presses < maxProgress) {
+            if (currentProgressPoints < targetProgressPoints) {
 
-                presses += barPoints;
-                if (presses > maxProgress) presses = maxProgress;   
+                currentProgressPoints += barPoints;
+                if (currentProgressPoints > targetProgressPoints) currentProgressPoints = targetProgressPoints;
 
-                float progress = static_cast<float>(presses) / maxProgress;
+                float progress = static_cast<float>(currentProgressPoints) / targetProgressPoints;
                 fill.setSize(Vector2f(maxWidth * progress, 30));
             }
 
@@ -690,7 +688,7 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
 }
 
 void Board::animateGravity(RenderWindow& window) {
-    const float duration = 0.5f; // duración total de la animación
+    const float duration = 0.7f; // duración total de la animación
     Clock clock;
     float elapsed = 0.f;
 
@@ -704,7 +702,7 @@ void Board::animateGravity(RenderWindow& window) {
 
     for (int col = 0; col < size; col++) {
         for (int row = 0; row < size; row++) {
-            startPositions[col * size + row] = matrix[col][row].getSprite().getPosition();
+            startPositions[col * size + row] = matrix[col][row]->getSprite().getPosition();
             endPositions[col * size + row] = Vector2f(
                 offsetX + tileSize * col,
                 offsetY + tileSize * row
@@ -725,7 +723,7 @@ void Board::animateGravity(RenderWindow& window) {
             for (int row = 0; row < size; row++) {
                 Vector2f pos = startPositions[col * size + row] +
                     (endPositions[col * size + row] - startPositions[col * size + row]) * smoothT;
-                matrix[col][row].getSprite().setPosition(pos);
+                matrix[col][row]->getSprite().setPosition(pos);
             }
         }
         Event event;
@@ -738,7 +736,7 @@ void Board::animateGravity(RenderWindow& window) {
     // Asegurarse que todas las gemas acaben exactamente en su destino
     for (int col = 0; col < size; col++) {
         for (int row = 0; row < size; row++) {
-            matrix[col][row].getSprite().setPosition(endPositions[col * size + row]);
+            matrix[col][row]->getSprite().setPosition(endPositions[col * size + row]);
         }
     }
 }
@@ -816,3 +814,4 @@ void Board::floatingTexts(RenderWindow& window, int matchedGems) {
        
     }
 }
+

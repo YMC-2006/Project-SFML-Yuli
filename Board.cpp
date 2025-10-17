@@ -182,54 +182,62 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     if (m1 && m2) {
                                         cout << "\n\nDouble match [" << x1 << "][" << y1 << "]\n";
                                         cout << "Double match [" << x2 << "][" << y2 << "]\n";
-                                        int gemType1 = matrix[x1][y1].getType();
-                                        int gemType2 = matrix[x2][y2].getType();
-                                        cout << "Gem Type: " << gemType1 << endl;
-                                        cout << "Gem Type: " << gemType2 << endl;
-
-                                       updateGemTaskProgress(x2,y2);
+                                       
+                        
+                                        updateGemTaskProgress();
+                                       
                                         
                                     }
                                     else if (m1) {
                                         cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
-                                        int gemType = matrix[x1][y1].getType();
-                                        cout << "Gem Type: " << gemType << endl;
-                                        updateGemTaskProgress( x1,y1);
+                                       
+                                        updateGemTaskProgress();
+
 
                                     }
                                     
                                     else if(m2) {
                                         cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
-                                        int gemType = matrix[x2][y2].getType();
-                                        cout << "Gem Type: " << gemType << endl;
-                                        updateGemTaskProgress( x2,y2);
+                                       
+                                        updateGemTaskProgress();
+
                                     }
                                     
+                                    int totalMatched = 0;
                                     cout << "A match was found :D" << endl;
                                     int gemsMatched = countPoints();
+                                    totalMatched += gemsMatched;
                                     pointsCounter += gemsMatched * 10;
                                     totalMoves -= 1;
-
-                                   
-                                   
-
-                                    
                                     if (gemsMatched > 3) {
                                         cout << "Match 4+ gems";
-                                    }
+                                    }   
                                   
                                     floatingTexts(window, gemsMatched);
 
                                     // Bucle de cascada
                                     while (deleteMatch()) {
                                         pullGravity();
-                                        //animateGravity(window);
+                                        animateGravity(window);
+
+                                        // Verificamos nuevos matches después de cada caída
+                                        int cascadeMatch = countPoints();
+                                        if (cascadeMatch > 0) {
+                                            totalMatched += cascadeMatch;
+                                            pointsCounter += cascadeMatch * 10;
+                                            floatingTexts(window, cascadeMatch);
+                                            updateGemTaskProgress();
+
+                                        }
+
+
                                     }
+                                    cout << "Total gems matched (including cascades): " << totalMatched << endl;
 
 
                                     if (totalMoves <= 0) {
                                         window.close();
-                                        game.runThirdWindow(pointsCounter);
+                                        game.runThirdWindow(pointsCounter, gemTaskAmount);
                                     }
 
 
@@ -263,61 +271,39 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 }
 
 
-bool Board::updateGemTaskProgress(int x, int y) {
+bool Board::updateGemTaskProgress() {
 
     
-    if (checkMatchAt(x, y)) {
-        int matchedType = matrix[x][y].getType();
+    int gemsFound = 0;
 
-        if (matchedType == gemTask) {
-            barPoints = countPoints();
-            gemTaskAmount -= barPoints;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            int type = matrix[i][j].getType();
 
-            if (gemTaskAmount < 0) {
-                gemTaskAmount = 0;
-              
+            if (type == -1) continue;
+
+            // Si es del tipo objetivo y está en un match, cuenta
+            if (type == gemTask && checkMatchAt(i, j)) {
+                gemsFound++;
             }
-            cout << "Gem task found!! remains " << gemTaskAmount << endl;
-            thereIsProgress = true;
-            setProgress(thereIsProgress);
         }
-
-
     }
 
-    return thereIsProgress;
+    if (gemsFound > 0) {
+        gemTaskAmount -= gemsFound;
+        if (gemTaskAmount < 0) gemTaskAmount = 0;
+
+        barPoints = gemsFound; // para la barra
+        thereIsProgress = true;
+        setProgress(thereIsProgress);
+
+        cout << "Gem task progress (cascade included): " << gemsFound
+            << "Remaining: " << gemTaskAmount << endl;
+    }
 
 }
 
-void Board::updateGemTaskProgressDoubleMatch(int x1, int y1, int x2, int y2) {
 
-
-    if (checkMatchAt(x1, y1) && checkMatchAt(x2,y2)) {
-        int matchedType1 = matrix[x1][y1].getType();
-        int matchedType2 = matrix[x2][y2].getType();
-
-        if (matchedType1 == gemTask) {
-            int counter = countPoints();
-            gemTaskAmount -= counter;
-
-            if (gemTaskAmount < 0) gemTaskAmount = 0;
-            cout << "\nGem task found!! remains " << gemTaskAmount << endl;
-            cout << "Double match!! x1 and y1 was the match"<<endl;
-        }
-        if (matchedType2 == gemTask) {
-
-            int counter = countPoints();
-            gemTaskAmount -= counter;
-
-            if (gemTaskAmount < 0) gemTaskAmount = 0;
-            cout << "\nGem task found!! remains " << gemTaskAmount << endl;
-            cout << "Double match!! x2 and y2 was the match" << endl;
-
-        }
-
-
-    }
-}
 
 int Board::noInitialMatch(int i, int j) {
 	
@@ -600,7 +586,7 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
             if (presses < maxProgress) {
 
                 presses += barPoints;
-                if (presses > maxProgress) presses = maxProgress;
+                if (presses > maxProgress) presses = maxProgress;   
 
                 float progress = static_cast<float>(presses) / maxProgress;
                 fill.setSize(Vector2f(maxWidth * progress, 30));
@@ -704,7 +690,7 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
 }
 
 void Board::animateGravity(RenderWindow& window) {
-    const float duration = 0.2f; // duración total de la animación
+    const float duration = 0.5f; // duración total de la animación
     Clock clock;
     float elapsed = 0.f;
 
@@ -742,10 +728,10 @@ void Board::animateGravity(RenderWindow& window) {
                 matrix[col][row].getSprite().setPosition(pos);
             }
         }
-
+        Event event;
         // Dibujar toda la escena (no solo las gemas)
         window.clear();
-        drawBoard(window); // <--- función que dibuja TODO: fondo, texto, barra, etc.
+        drawScene(window, event);
         window.display();
     }
 

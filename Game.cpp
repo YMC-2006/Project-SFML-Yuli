@@ -600,7 +600,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
     }
 }
 
-void Game::runThirdWindow(int finalScore) {
+void Game::runThirdWindow(int finalScore, int gemTaskAmount) {
 
     
 
@@ -639,6 +639,8 @@ void Game::runThirdWindow(int finalScore) {
 
 
     RenderWindow returnWindow(VideoMode(600, 400), "PLAY AGAIN!!");
+    if (gemTaskAmount == 0) cout << "You won";
+    else cout << "you lost";
     returnWindow.setMouseCursorVisible(false);
     while (returnWindow.isOpen()) {
         Event event;

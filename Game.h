@@ -14,7 +14,7 @@ public:
 
 	void runMainWindow();
 	void runSecondWindow(const LevelConfig& config);
-	void runThirdWindow(int finalScore);
+	void runThirdWindow(int finalScore, int gemTaskAmount);
 	void runLVLwindow();
 
 };

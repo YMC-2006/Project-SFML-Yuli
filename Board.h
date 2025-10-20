@@ -13,7 +13,6 @@ private:
 	int x1, y1; // coords of the first click
 	static const int size = 8;
 	Gem* matrix[size][size];
-	Texture textures[5];
 	Gem* selectedGem = nullptr;
 	
 

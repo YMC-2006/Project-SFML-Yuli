@@ -7,6 +7,7 @@
 #include "Gem.h"
 #include "IceGem.h"
 #include "NormalGem.h"
+#include "BombGem.h"
 using namespace std;
 using namespace sf;
 
@@ -24,12 +25,6 @@ Board::Board(const LevelConfig& config) {
     this->levelNumber = config.levelNumber;
     this->hasIceBlocks = config.hasIceBlocks;
     this->enableBombGems = config.enableBombGems;
-
-    textures[0].loadFromFile("assets/purpleGem.png");
-    textures[1].loadFromFile("assets/yellowGem.png");
-    textures[2].loadFromFile("assets/greenGem.png");
-    textures[3].loadFromFile("assets/blueGem.png");
-    textures[4].loadFromFile("assets/redGem.png");
 
     fillMatrix();
    
@@ -75,10 +70,25 @@ void Board::fillMatrix() {
 
 	for (int i = 0; i < size; i++) {
 		for (int j = 0; j < size; j++) {
-            matrix[i][j] = new Gem();
+            
+            
             randType = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
-		
-            matrix[i][j]->initGem(randType, textures[randType]);
+
+
+            // 🔥 Prueba manual (solo para verificar que se ven)
+            if (i == 2 && j == 2) {
+                matrix[i][j] = new BombGem(randType);
+            }
+            else if (i == 4 && j == 4) {
+                matrix[i][j] = new IceGem(randType);
+            }
+            else {
+                matrix[i][j] = new Gem();
+                matrix[i][j]->initGem(randType);
+            }
+
+
+           
 			matrix[i][j]->getSprite().setPosition(250 + 70.f * i,180 + 70.f * j);
 			matrix[i][j]->getSprite().setOrigin(
 				matrix[i][j]->getSprite().getTexture()->getSize().x / 2.f,
@@ -511,7 +521,7 @@ void Board::pullGravity() {
             matrix[col][row]->setType(newType);
 
             // Assign the correct texture
-            matrix[col][row]->getSprite().setTexture(textures[newType]);
+            matrix[col][row]->initGem(newType);
 
             // Screen position
             matrix[col][row]->getSprite().setPosition(
@@ -617,7 +627,7 @@ void Board::drawText(RenderWindow& window) {
     Text task(to_string(getGemTaskAmount()), font, 40); task.setPosition(250, 20);
 
    
-    Sprite taskGem(textures[getGemTask()]); taskGem.setScale(.60f, .60f); taskGem.setPosition(150, 80);
+    Sprite taskGem(Gem::getTexture(getGemTask())); taskGem.setScale(.60f, .60f); taskGem.setPosition(150, 80);
 
     window.draw(points);
     window.draw(moves);

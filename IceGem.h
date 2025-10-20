@@ -11,12 +11,14 @@ class IceGem : public Gem {
 
 private:
 
-	Sprite sprite;
-	Texture textures[5];
+	static Texture iceTextures[5]; 
+	static bool iceTexturesLoaded;
+	bool frozen = true;
+
 
 public:
 
-	IceGem();
+	IceGem(int type = 0);
 	~IceGem();
 
 };

@@ -8,14 +8,25 @@
 using namespace std;
 using namespace sf;
 
+Texture IceGem::iceTextures[5];
+bool IceGem::iceTexturesLoaded = false;
 
-IceGem::IceGem() {
-    textures[0].loadFromFile("assets/purpleIceGem.png");
-    textures[1].loadFromFile("assets/yellowIceGem.png");
-    textures[2].loadFromFile("assets/greenIceGem.png");
-    textures[3].loadFromFile("assets/blueIceGem.png");
-    textures[4].loadFromFile("assets/redIceGem.png");
-    initGem(0, textures[0]);
+
+IceGem::IceGem(int type) {
+
+	if (!iceTexturesLoaded) {
+		iceTextures[0].loadFromFile("assets/purpleIceGem.png");
+		iceTextures[1].loadFromFile("assets/yellowIceGem.png");
+		iceTextures[2].loadFromFile("assets/greenIceGem.png");
+		iceTextures[3].loadFromFile("assets/blueIceGem.png");
+		iceTextures[4].loadFromFile("assets/redIceGem.png");
+		iceTexturesLoaded = true;
+		
+	}
+   
+	this->type = type;
+	sprite.setTexture(iceTextures[type]);
+
 }
 
 

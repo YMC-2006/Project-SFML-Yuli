@@ -1,10 +1,10 @@
 #pragma once
 struct LevelConfig {
     int levelNumber;          // Actual Level
-    int moves;                // Cantidad de movimientos
-    int targetScore;          // Puntos que hay que alcanzar
-    int gemTaskAmount;          // Cantidad de gemas que tengo que alcanzar
-    int gemTask;             // El tipo de la gema morada, amarilla, etc...
-    bool hasIceBlocks;        // Si tiene obstáculos o no
-    bool enableBombGems;      // Si permite gemas bomba
+    int moves;                // Movements per levels
+    int targetScore;          // Points to reach
+    int gemTaskAmount;          // Amount of gems to get in order to win
+    int gemTask;             // the gem type
+    bool hasIceBlocks;        // if it has obstacles or not
+    bool enableBombGems;      // if allows bomb gems
 };

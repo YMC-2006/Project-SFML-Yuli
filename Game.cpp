@@ -46,7 +46,7 @@ void Game::runMainWindow() {
     spriteMenu.setOrigin(menu.getSize().x / 2.f, menu.getSize().y / 2.f);
 
     Texture playButton;
-    playButton.loadFromFile("assets/playButto.png");
+    playButton.loadFromFile("assets/playButton.png");
     Sprite spritePlay(playButton);
     spritePlay.setPosition(395, 370);
     spritePlay.setScale(0.30f, 0.30f);
@@ -453,10 +453,10 @@ void Game::runLVLwindow() {
      
     //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems
     LevelConfig level1{ 1, 15, 1000, 20, 0, false, false};  // Purple Gem
-    LevelConfig level2{ 2, 25, 2000, 15, 1, true, false }; // Yellow Gem
+    LevelConfig level2{ 2, 25, 2000, 15, 1, false, true }; // Yellow Gem
     LevelConfig level3{ 3, 15, 3000, 25, 2, true, true };  // Green Gem
-    LevelConfig level4{ 4, 25, 4000, 30, 3, true, true };  // Blue Gem
-    LevelConfig level5{ 5, 10, 5000, 20, 4, true, true };   // Red Gem
+    LevelConfig level4{ 4, 25, 4000, 30, 3, false, false };  // Blue Gem
+    LevelConfig level5{ 5, 10, 5000, 20, 4, false, false };   // Red Gem
 
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
@@ -590,10 +590,11 @@ void Game::runSecondWindow(const LevelConfig& config) {
            
             Vector2i mousePosCursor = Mouse::getPosition(gameWindow);
             spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
-            gameWindow.draw(spriteCursor);
            
             bool isThereMatch = board.progress();
             board.barProgress(gameWindow, event, isThereMatch);
+            gameWindow.draw(spriteCursor);
+
             gameWindow.display();
 
         }

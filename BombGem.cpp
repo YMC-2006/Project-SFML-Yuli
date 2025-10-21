@@ -1,5 +1,6 @@
 #include <iostream>
 #include "BombGem.h"
+#include "Gem.h"
 #include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -16,11 +17,12 @@ BombGem::BombGem(int type) {
         bombTexture[3].loadFromFile("assets/gemBombBlue.png");
         bombTexture[4].loadFromFile("assets/gemBombRed.png");
         bombTextureLoaded = true;
-        cout << "could not load the textures for some reason -_-"<<endl;
+       
        
     }
     this->type = type;
     sprite.setTexture(bombTexture[type]);
+  
 }
 
 BombGem::~BombGem() {

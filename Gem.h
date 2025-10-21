@@ -20,6 +20,7 @@ public:
 	~Gem();
 
 	virtual void initGem(int t); // initialize gem
+	virtual int getPointsValue() const { return 10; }  // 🔹 Puntos base
 	virtual int getType();
 	void setType(int t);
 	Sprite& getSprite();
@@ -27,7 +28,7 @@ public:
 	static const Texture& getTexture(int index);
 	virtual bool isSelected();
 	void setSelected(bool s);
-	void onMatch();
+	
 
 	// ⚡ Load the textures
 	static void loadTextures();

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Gem.h"
@@ -16,4 +16,7 @@ private:
 public:
 	BombGem(int type = 0);
 	~BombGem();
+
+	int getPointsValue() const override { return 15; }  // 💥 POLIMORPHISM
+	
 };

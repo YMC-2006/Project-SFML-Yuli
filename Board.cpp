@@ -73,23 +73,18 @@ void Board::fillMatrix() {
             
             
             randType = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
-
-
-            // 🔥 Prueba manual (solo para verificar que se ven)
-            if (i == 2 && j == 2) {
+            if (i==0 && j==0 && enableBombGems) {
                 matrix[i][j] = new BombGem(randType);
             }
-            else if (i == 4 && j == 4) {
+            else if (i == 4 && j == 4 && hasIceBlocks) {
                 matrix[i][j] = new IceGem(randType);
             }
             else {
                 matrix[i][j] = new Gem();
                 matrix[i][j]->initGem(randType);
             }
-
-
            
-			matrix[i][j]->getSprite().setPosition(250 + 70.f * i,180 + 70.f * j);
+			matrix[i][j]->getSprite().setPosition(250 + 70.f * i, 200 + 70.f * j);
 			matrix[i][j]->getSprite().setOrigin(
 				matrix[i][j]->getSprite().getTexture()->getSize().x / 2.f,
 				matrix[i][j]->getSprite().getTexture()->getSize().y / 2.f
@@ -204,7 +199,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
                                 bool m1 = checkMatchAt(x1, y1);
                                 bool m2 = checkMatchAt(x2, y2);
-
+                                int centerX = 0, centerY = 0;
 
                                 if (checkMatchAt(x1, y1) || checkMatchAt(x2, y2)) { // If there is a match we add points and delete the match, then call the gravity func
                                     
@@ -222,7 +217,8 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
                                        
                                         updateGemTaskProgress();
-
+                                        centerX = x1;
+                                        centerY = y1;
 
                                     }
                                     
@@ -230,39 +226,61 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
                                        
                                         updateGemTaskProgress();
-
+                                        centerX = x2;
+                                        centerY = y2;
                                     }
                                     
                                     int totalMatched = 0;
                                     cout << "A match was found :D" << endl;
-                                    int gemsMatched = countPoints();
+
+                                    int gemsMatched = countPoints(); // returns total with values per type
                                     totalMatched += gemsMatched;
-                                    pointsCounter += gemsMatched * 10;
+                                    pointsCounter += gemsMatched;   
                                     totalMoves -= 1;
-                                      
-                                  
+                                    
+                         
                                     floatingTexts(window, gemsMatched);
+
 
                                     // Cascade Loop
                                     while (deleteMatch()) {
                                         pullGravity();
                                         animateGravity(window);
 
-                                        // Check for new matches after the gravity falls
-                                        int cascadeMatch = countPoints();
-                                        if (cascadeMatch > 0) {
-                                            totalMatched += cascadeMatch;
-                                            pointsCounter += cascadeMatch * 10;
-                                            floatingTexts(window, cascadeMatch);
-                                            updateGemTaskProgress();
-
+                                        // 🔹 Nueva verificación de matches tras la gravedad
+                                        bool cascadeHasMatch = false;
+                                        for (int i = 0; i < size; i++) {
+                                            for (int j = 0; j < size; j++) {
+                                                if (checkMatchAt(i, j)) {
+                                                    cascadeHasMatch = true;
+                                                }
+                                            }
                                         }
 
-
+                                        if (cascadeHasMatch) {
+                                            int cascadeMatch = countPoints(); // now checks and counts the points normally
+                                            totalMatched += cascadeMatch;
+                                            pointsCounter += cascadeMatch;  // 
+                                            floatingTexts(window, cascadeMatch);
+                                            updateGemTaskProgress();
+                                        }
                                     }
 
-                                    cout << "Total gems matched (including cascades): " << totalMatched << endl;
 
+                                   
+
+                                    /*if (gemsMatched >= 4 && enableBombGems) {
+
+                                        int type = matrix[centerX][centerY]->getType();
+                                        Vector2f gemPos = matrix[centerX][centerY]->getSprite().getPosition();
+                                        delete matrix[centerX][centerY];
+                                        matrix[centerX][centerY] = new BombGem(type);
+                                        matrix[centerX][centerY]->getSprite().setPosition(gemPos);
+
+                                        cout << "💣 Bomb gem created at [" << centerX << "][" << centerY << "]!\n";
+
+
+                                    }*/
 
                                     if (totalMoves <= 0) {
                                         window.close();
@@ -384,46 +402,22 @@ void Board::setProgress(bool p) {
 }
 
 int Board::countPoints() {
-    int totalGems = 0;
-    bool marked[8][8] = { false };
+    int totalPoints = 0;
 
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            int currentType = matrix[i][j]->getType();
-            if (currentType == -1) continue;
-
-            // ---- Horizontal ----
-            if (j < size - 2 && matrix[i][j + 1]->getType() == currentType &&
-                matrix[i][j + 2]->getType() == currentType)
-            {
-                int k = j;
-                while (k < size && matrix[i][k]->getType() == currentType) {
-                    if (!marked[i][k]) {        //  dont count again
-                        marked[i][k] = true;
-                        totalGems++;
-                    }
-                    k++;
-                }
+            if (matrix[i][j] && matrix[i][j]->getType() == -1) {  // deleted
+                continue;
             }
 
-            // ---- Vertical ----
-            if (i < size - 2 && matrix[i + 1][j]->getType() == currentType &&
-                matrix[i + 2][j]->getType() == currentType)
-            {
-                int k = i;
-                while (k < size && matrix[k][j]->getType() == currentType) {
-                    if (!marked[k][j]) {        //  dont count again
-                        marked[k][j] = true;
-                        totalGems++;
-                    }
-                    k++;
-                }
+            
+            if (checkMatchAt(i, j)) {
+                totalPoints += matrix[i][j]->getPointsValue();
             }
         }
     }
 
-    return totalGems; // exact number of unique gems
-    cout << "Total gems found in line: "<<totalGems<<endl;
+    return totalPoints;
    
 }
 
@@ -484,7 +478,7 @@ bool Board::deleteMatch()    {
 void Board::pullGravity() {
 
     const float offsetX = 250.f;   // same values as in fillMatrix
-    const float offsetY = 180.f;
+    const float offsetY = 150.f;
     const float tileSize = 70.f;
         
     // Loop through each column
@@ -624,8 +618,8 @@ void Board::drawText(RenderWindow& window) {
     font.loadFromFile("arial.ttf");
     Text points(to_string(getPoints()), font, 40); points.setPosition(570, 20);
     Text moves(to_string(getMoves()), font, 40); moves.setPosition(880, 20);
-    Text task(to_string(getGemTaskAmount()), font, 40); task.setPosition(250, 20);
-
+    Text task(to_string(getGemTaskAmount()),font, 40); task.setPosition(250, 20);
+    
    
     Sprite taskGem(Gem::getTexture(getGemTask())); taskGem.setScale(.60f, .60f); taskGem.setPosition(150, 80);
 
@@ -663,10 +657,6 @@ void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Ve
 }
 
 void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window) {
-
-    Texture backgroundIMG;
-    backgroundIMG.loadFromFile("assets/backgroundGame5.png");
-    Sprite spriteBackImg(backgroundIMG);
 
     const float duration = .4f;
     float elapsed = 0.f;
@@ -737,7 +727,6 @@ void Board::animateGravity(RenderWindow& window) {
             }
         }
         Event event;
-        // Dibujar toda la escena (no solo las gemas)
         window.clear();
         drawScene(window, event);
         window.display();
@@ -752,15 +741,7 @@ void Board::animateGravity(RenderWindow& window) {
 }
 
 
-void Board::generateBombGem(Gem& g, int typeGem, Vector2f pos, Texture& tex) {
-    Sprite sprite;
-    bool isBomb = true;
-    if (typeGem == 0) {
-        //Generate a purple bomb gem
-        
-        g.getSprite().setPosition(pos);
-    }
-}
+
 
 
 void Board::floatingTexts(RenderWindow& window, int matchedGems) {

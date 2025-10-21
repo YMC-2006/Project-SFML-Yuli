@@ -30,8 +30,9 @@ void Gem::loadTextures() {
 
 void Gem::initGem(int t) {
     type = t;
-    if (t >= 0 && t < 5)
+    if (t >= 0 && t < 5) {
         sprite.setTexture(textures[t]);
+    }
     sprite.setScale(.70f, .70f); //the size of each individual gem is 70px cus 80 to big
 
 }

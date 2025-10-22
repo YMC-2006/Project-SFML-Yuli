@@ -30,16 +30,6 @@ Board::Board(const LevelConfig& config) {
    
 }
 
-void Board::generateIceGems() {
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            matrix[0][0] = new IceGem();
-           
-            
-        }
-    }
-
-}
 
 void Board::drawScene(RenderWindow& window, Event& event) {
 
@@ -243,11 +233,11 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
 
                                     // Cascade Loop
-                                    while (deleteMatch()) {
+                                    while (deleteMatch(window)) {
                                         pullGravity();
                                         animateGravity(window);
 
-                                        // 🔹 Nueva verificación de matches tras la gravedad
+                                        // had to add this bc when there are matches produced by the cascade effect the system wasnt counting the points
                                         bool cascadeHasMatch = false;
                                         for (int i = 0; i < size; i++) {
                                             for (int j = 0; j < size; j++) {
@@ -260,7 +250,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         if (cascadeHasMatch) {
                                             int cascadeMatch = countPoints(); // now checks and counts the points normally
                                             totalMatched += cascadeMatch;
-                                            pointsCounter += cascadeMatch;  // 
+                                            pointsCounter += cascadeMatch;  
                                             floatingTexts(window, cascadeMatch);
                                             updateGemTaskProgress();
                                         }
@@ -277,7 +267,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         matrix[centerX][centerY] = new BombGem(type);
                                         matrix[centerX][centerY]->getSprite().setPosition(gemPos);
 
-                                        cout << "💣 Bomb gem created at [" << centerX << "][" << centerY << "]!\n";
+                                        
 
 
                                     }*/
@@ -301,7 +291,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 }
                             }
                            
-                            // Reset selección
+                            // Reset selection
                             selectedGem->setSelected(false);
                             clickedGem->setSelected(false);
                             selectedGem = nullptr;
@@ -329,7 +319,7 @@ void Board::updateGemTaskProgress() {
 
             if (type == -1) continue;
 
-            // Si es del tipo objetivo y está en un match, cuenta
+            // if theres a match and is the right type (same type as the task) it counts
             if (type == gemTask && checkMatchAt(i, j)) {
                 gemsFound++;
             }
@@ -340,7 +330,7 @@ void Board::updateGemTaskProgress() {
         gemTaskAmount -= gemsFound;
         if (gemTaskAmount < 0) gemTaskAmount = 0;
 
-        barPoints = gemsFound; // para la barra
+        barPoints = gemsFound; // for the bar
         thereIsProgress = true;
         setProgress(thereIsProgress);
 
@@ -421,12 +411,11 @@ int Board::countPoints() {
    
 }
 
-
-bool Board::deleteMatch()    {
+bool Board::deleteMatch(RenderWindow& window) {
     bool found = false;
     vector<pair<int, int>> toDelete;
 
-    // Horizontal
+    // Horizontal matched
     for (int i = 0; i < size; i++) {
         int j = 0;
         while (j < size) {
@@ -439,16 +428,14 @@ bool Board::deleteMatch()    {
 
             if (len >= 3) {
                 found = true;
-                for (int k = start; k <= j; k++) {
-                    toDelete.push_back({ i,k });
-                }
-           
+                for (int k = start; k <= j; k++)
+                    toDelete.push_back({ i, k });
             }
             j++;
         }
     }
 
-    // Vertical
+    // Vertical Matches
     for (int j = 0; j < size; j++) {
         int i = 0;
         while (i < size) {
@@ -462,15 +449,50 @@ bool Board::deleteMatch()    {
             if (len >= 3) {
                 found = true;
                 for (int k = start; k <= i; k++)
-                    toDelete.push_back({ k,j });
+                    toDelete.push_back({ k, j });
             }
             i++;
         }
     }
 
-    // Delete
-    for (auto& p : toDelete)
-        matrix[p.first][p.second]->setType(-1);
+    // if there are matches HERE we animate themm
+    if (found) {
+        const float duration = 0.4f;
+        Clock clock;
+        float elapsed = 0.f;
+
+        while (elapsed < duration) {
+            float dt = clock.restart().asSeconds();
+            elapsed += dt;
+            float t = min(elapsed / duration, 1.f);
+            float alpha = 255 * (1.f - t);
+
+           //Here we draw the whole thing
+            Event event;
+            drawScene(window, event);
+
+           // here happens the magin in the sprite s we get the type of sprite (the img) and we get the color of that sprite thanks to the funtion getColor
+            // that is from Color, 
+            for (auto& p : toDelete) {
+                Sprite& s = matrix[p.first][p.second]->getSprite();
+                Color c = s.getColor();
+                c.a = static_cast<Uint8>(alpha); // we use "a" bc "a" is the opacity component comes from Alpha
+                s.setColor(c);
+
+                // important the expansion effect
+                float scale = 1.f + 0.2f * t;
+                s.setScale(scale, scale);
+
+                window.draw(s);
+            }
+
+            window.display();
+        }
+
+        // then we delete them
+        for (auto& p : toDelete)
+            matrix[p.first][p.second]->setType(-1);
+    }
 
     return found;
 }
@@ -604,7 +626,7 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
         }
     }
 
-    // Dibujamos siempre (independientemente de si hay click o no)
+    // we always draw this even if theres no click
 
     window.draw(outline);
     window.draw(fill);
@@ -631,7 +653,7 @@ void Board::drawText(RenderWindow& window) {
 }
 
 void Board::startShake(RenderWindow& window, Gem& g1, Gem& g2, Vector2f pos1, Vector2f pos2) {
-
+    // Currently out of use but it used to work pretty fine so its here in case I want to add in the future
     //Shake animation
     static float offSet = 5.f;
     static int cycles = 3;
@@ -688,11 +710,11 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
 }
 
 void Board::animateGravity(RenderWindow& window) {
-    const float duration = 0.7f; // duración total de la animación
+    const float duration = 0.7f;
     Clock clock;
     float elapsed = 0.f;
 
-    // Guardamos las posiciones iniciales y finales de cada gema
+    // Save the initial and final position for each gem
     vector<Vector2f> startPositions(size * size);
     vector<Vector2f> endPositions(size * size);
 
@@ -710,13 +732,13 @@ void Board::animateGravity(RenderWindow& window) {
         }
     }
 
-    // Bucle de animación
+    // Animation loop
     while (elapsed < duration) {
         float dt = clock.restart().asSeconds();
         elapsed += dt;
         float t = min(elapsed / duration, 1.f);
 
-        // interpolación suave (ease-out)
+        // interpolation 
         float smoothT = t * t * (3 - 2 * t);
 
         for (int col = 0; col < size; col++) {
@@ -732,7 +754,7 @@ void Board::animateGravity(RenderWindow& window) {
         window.display();
     }
 
-    // Asegurarse que todas las gemas acaben exactamente en su destino
+    // Here we make sure every single gem gets to its place
     for (int col = 0; col < size; col++) {
         for (int row = 0; row < size; row++) {
             matrix[col][row]->getSprite().setPosition(endPositions[col * size + row]);
@@ -766,11 +788,11 @@ void Board::floatingTexts(RenderWindow& window, int matchedGems) {
     great.setScale(0.5f, 0.5f);
     great.setPosition(250.f, 150.f);
 
-    // ⚙️ Starting and finish position
+    // Starting and finish position
     Vector2f startPos(250.f, 150.f);
     Vector2f endPos(250.f, 50.f); // goes up a little bit
 
-    // ✨ Animation Lopp
+    // Animation Lopp
     while (elapsed < duration) {
         float dt = clock.restart().asSeconds();
         elapsed += dt;

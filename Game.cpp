@@ -563,7 +563,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
     gameWindow.setMouseCursorVisible(false);
     board.initBar();
 
-    // Ejemplo: mostrar info en consola
+    // Info of the specific level
     cout << "Starting level " << config.levelNumber << endl;
     cout << "Moves: " << config.moves << " | Target: " << config.targetScore << endl;
     cout << "Type of Gem: " << config.gemTask << endl;

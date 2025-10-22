@@ -20,5 +20,5 @@ public:
 
 	IceGem(int type = 0);
 	~IceGem();
-	int getPointsValue() const override { return 20; }  // 🧊 Vale aún más
+	int getPointsValue() const override { return 20; }  
 };

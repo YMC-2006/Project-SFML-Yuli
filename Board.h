@@ -53,9 +53,7 @@ public:
 	bool checkMatchAt(int x, int y);
 	void swapGems(RenderWindow& gameWindow, Event& event);
 	void animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window);
-	void generateBombGem(Gem& g1, int typeGem, Vector2f pos, Texture& tex);
-	void generateIceGems();
-	bool deleteMatch();
+	bool deleteMatch(RenderWindow& window);
 	int countPoints();
 	
 	

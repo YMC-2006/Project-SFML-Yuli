@@ -7,4 +7,6 @@ struct LevelConfig {
     int gemTask;             // the gem type
     bool hasIceBlocks;        // if it has obstacles or not
     bool enableBombGems;      // if allows bomb gems
+    bool isUnlocked;
+
 };

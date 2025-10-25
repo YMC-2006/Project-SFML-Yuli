@@ -28,6 +28,7 @@ private:
 	
 	bool hasIceBlocks;
 	bool enableBombGems;
+	bool isUnlocked;
 
 	//Bar progress
 	

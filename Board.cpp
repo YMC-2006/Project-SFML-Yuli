@@ -25,6 +25,7 @@ Board::Board(const LevelConfig& config) {
     this->levelNumber = config.levelNumber;
     this->hasIceBlocks = config.hasIceBlocks;
     this->enableBombGems = config.enableBombGems;
+    this->isUnlocked = config.isUnlocked;
 
     fillMatrix();
    
@@ -223,13 +224,13 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     int totalMatched = 0;
                                     cout << "A match was found :D" << endl;
 
-                                    int gemsMatched = countPoints(); // returns total with values per type
-                                    totalMatched += gemsMatched;
-                                    pointsCounter += gemsMatched;   
+                                    int gemsMatchedPoints = countPoints(); // returns total with values per type
+                                    totalMatched += gemsMatchedPoints;
+                                    pointsCounter += gemsMatchedPoints;   
                                     totalMoves -= 1;
                                     
                          
-                                    floatingTexts(window, gemsMatched);
+                                    floatingTexts(window, (gemsMatchedPoints / 10));
 
 
                                     // Cascade Loop
@@ -761,10 +762,6 @@ void Board::animateGravity(RenderWindow& window) {
         }
     }
 }
-
-
-
-
 
 void Board::floatingTexts(RenderWindow& window, int matchedGems) {
    

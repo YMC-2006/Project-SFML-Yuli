@@ -451,27 +451,27 @@ void Game::runMainWindow() {
         
 void Game::runLVLwindow() {
      
-    //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems
-    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false};  // Purple Gem
-    LevelConfig level2{ 2, 25, 2000, 15, 1, false, true }; // Yellow Gem
-    LevelConfig level3{ 3, 15, 3000, 25, 2, true, true };  // Green Gem
-    LevelConfig level4{ 4, 25, 4000, 30, 3, false, false };  // Blue Gem
-    LevelConfig level5{ 5, 10, 5000, 20, 4, false, false };   // Red Gem
+    //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl
+    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false, true};  // Purple Gem
+    LevelConfig level2{ 2, 25, 2000, 15, 1, false, true, false }; // Yellow Gem
+    LevelConfig level3{ 3, 15, 3000, 25, 2, true, true, false};  // Green Gem
+    LevelConfig level4{ 4, 25, 4000, 30, 3, false, false, false};  // Blue Gem
+    LevelConfig level5{ 5, 10, 5000, 20, 4, false, false, false };   // Red Gem
 
 
-    Texture txLevel1; txLevel1.loadFromFile("assets/level1.png");
+    Texture txLevel1; txLevel1.loadFromFile("assets/level1Unlocked.png");
     Sprite level1Button(txLevel1); level1Button.setPosition(70.f, 180.f); level1Button.setScale(.30f, .30f);
 
-    Texture txLevel2; txLevel2.loadFromFile("assets/level2.png");
+    Texture txLevel2; txLevel2.loadFromFile("assets/level2Unlocked.png");
     Sprite level2Button(txLevel2); level2Button.setPosition(450.f, 350.f); level2Button.setScale(.30f, .30f);
 
-    Texture txLevel3; txLevel3.loadFromFile("assets/level3.png");
+    Texture txLevel3; txLevel3.loadFromFile("assets/level3Unlocked.png");
     Sprite level3Button(txLevel3); level3Button.setPosition(90.f, 560.f); level3Button.setScale(.30f, .30f);
 
-    Texture txLevel4; txLevel4.loadFromFile("assets/level4.png");
+    Texture txLevel4; txLevel4.loadFromFile("assets/level4Unlocked.png");
     Sprite level4Button(txLevel4); level4Button.setPosition(450.f, 800.f); level4Button.setScale(.30f, .30f);
 
-    Texture txLevel5; txLevel5.loadFromFile("assets/level5.png");
+    Texture txLevel5; txLevel5.loadFromFile("assets/level5Unlocked.png");
     Sprite level5Button(txLevel5); level5Button.setPosition(70.f, 1100.f); level5Button.setScale(.30f, .30f);
 
     //--------------------------------------------------------------------------------------------------------

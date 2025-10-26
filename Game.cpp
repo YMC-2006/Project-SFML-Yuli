@@ -61,7 +61,7 @@ void Game::runMainWindow() {
 
     // Load textures
     Texture texPurple, texBlue, texYellow, texGreen, texRed;
-    texPurple.loadFromFile("assets/purpleGem.png");
+    texPurple.loadFromFile("assets/purpleIceGem.png");
     texBlue.loadFromFile("assets/blueGem.png");
     texYellow.loadFromFile("assets/gemBombYellow.png");
     texGreen.loadFromFile("assets/greenGem.png");
@@ -451,12 +451,13 @@ void Game::runMainWindow() {
         
 void Game::runLVLwindow() {
      
-    //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl
-    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false, true};  // Purple Gem
-    LevelConfig level2{ 2, 25, 2000, 15, 1, false, true, false }; // Yellow Gem
-    LevelConfig level3{ 3, 15, 3000, 25, 2, true, true, false};  // Green Gem
-    LevelConfig level4{ 4, 25, 4000, 30, 3, false, false, false};  // Blue Gem
-    LevelConfig level5{ 5, 10, 5000, 20, 4, false, false, false };   // Red Gem
+    //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl, swap booster
+
+    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false, true, false};  // Purple Gem
+    LevelConfig level2{ 2, 25, 2000, 15, 1, false, true, false, false};  // Yellow Gem
+    LevelConfig level3{ 3, 15, 3000, 20, 2, true, true, false, false};   // Green Gem
+    LevelConfig level4{ 4, 25, 4000, 30, 3, false, false, false, false}; // Blue Gem
+    LevelConfig level5{ 5, 10, 5000, 12, 4, false, false, false, true }; // Red Gem
 
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1Unlocked.png");
@@ -551,6 +552,11 @@ void Game::runSecondWindow(const LevelConfig& config) {
     Texture cursor;
     cursor.loadFromFile("assets/cursor.png");
     Sprite spriteCursor(cursor);
+
+    Texture swapB; swapB.loadFromFile("assets/swapBooster.png");
+    Sprite swapBooster;
+    swapBooster.setTexture(swapB); swapBooster.setPosition(500.f, 100.f);
+    swapBooster.setScale(.10f, .10f);
     
     Board board(config);
 
@@ -593,6 +599,18 @@ void Game::runSecondWindow(const LevelConfig& config) {
            
             bool isThereMatch = board.progress();
             board.barProgress(gameWindow, event, isThereMatch);
+            if (config.levelNumber == 5) {
+             gameWindow.draw(swapBooster);
+             if (event.type == Event::MouseButtonPressed) {
+                 Vector2f mousePosF = static_cast<Vector2f>(Mouse::getPosition(gameWindow));
+                 if (config.swapBooster && swapBooster.getGlobalBounds().contains(mousePosF)) {
+                     board.activateBooster();
+                 }
+             }
+
+
+            }
+            
             gameWindow.draw(spriteCursor);
 
             gameWindow.display();

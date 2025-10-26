@@ -29,6 +29,9 @@ private:
 	bool hasIceBlocks;
 	bool enableBombGems;
 	bool isUnlocked;
+	
+	bool boosterActive = false; // booster is used
+	bool boosterUnlocked = false; // comes from level Config
 
 	//Bar progress
 	
@@ -51,8 +54,9 @@ public:
 	int noInitialMatch(int i, int j);
 	void fillMatrix();
 	void drawBoard(RenderWindow &gameWindow);
-	bool checkMatchAt(int x, int y);
+	void activateBooster();
 	void swapGems(RenderWindow& gameWindow, Event& event);
+	bool checkMatchAt(int x, int y);
 	void animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window);
 	bool deleteMatch(RenderWindow& window);
 	int countPoints();
@@ -67,7 +71,7 @@ public:
 	
 
 
-	void initBar(); // Inicialices the bar we call this function only once
+	void initBar(); // Inicializes the bar we call this function only once
 	void updateGemTaskProgress(); // sets the thereIsMatch variable
 	void barProgress(RenderWindow& window, Event& event,bool thereIsMatch); // Updates and draws the bar progress
 	bool progress(); void setProgress(bool p); // sets and gets

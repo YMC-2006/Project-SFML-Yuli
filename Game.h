@@ -17,4 +17,6 @@ public:
 	void runThirdWindow(int finalScore, int gemTaskAmount);
 	void runLVLwindow();
 
+	void unlockLevels(int gemTaskAmount);
+
 };

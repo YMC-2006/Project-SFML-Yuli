@@ -8,7 +8,7 @@ using namespace std;
 using namespace sf;
 
 void Game::runMainWindow() {
-
+    cout << "Running game!"<<endl;
     RenderWindow windowMain(VideoMode(800, 600), "MATCH-3");
 
     Texture cursorTexture;
@@ -149,7 +149,6 @@ void Game::runMainWindow() {
 
                 if (event.type == Event::MouseButtonPressed) {
                     clickSound.play();
-                    cout << "¡Button PLAY pressed!" << endl;
                     windowMain.close();
                     runLVLwindow();
                    
@@ -453,7 +452,7 @@ void Game::runLVLwindow() {
      
     //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl, swap booster
 
-    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false, true, false};  // Purple Gem
+    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false, false, false};  // Purple Gem
     LevelConfig level2{ 2, 25, 2000, 15, 1, false, true, false, false};  // Yellow Gem
     LevelConfig level3{ 3, 15, 3000, 20, 2, true, true, false, false};   // Green Gem
     LevelConfig level4{ 4, 25, 4000, 30, 3, false, false, false, false}; // Blue Gem
@@ -475,6 +474,21 @@ void Game::runLVLwindow() {
     Texture txLevel5; txLevel5.loadFromFile("assets/level5Unlocked.png");
     Sprite level5Button(txLevel5); level5Button.setPosition(70.f, 1100.f); level5Button.setScale(.30f, .30f);
 
+    //----------------------------------------------------------------------------------------------------------
+
+    Texture txLevel2L; txLevel2L.loadFromFile("assets/level2Locked.png");
+    Sprite level2Locked(txLevel2L); level2Locked.setPosition(450.f, 350.f); level2Locked.setScale(.30f,.30f);
+
+    Texture txLevel3L; txLevel3L.loadFromFile("assets/level3Locked.png");
+    Sprite level3Locked(txLevel3L); level3Locked.setPosition(90.f, 560.f); level3Locked.setScale(.30f, .30f);
+
+    Texture txLevel4L; txLevel4L.loadFromFile("assets/level4Locked.png");
+    Sprite level4Locked(txLevel4L); level4Locked.setPosition(450.f, 800.f); level4Locked.setScale(.30f, .30f);
+
+    Texture txLevel5L; txLevel5L.loadFromFile("assets/level5Locked.png");
+    Sprite level5Locked(txLevel5L); level5Locked.setPosition(70.f, 1100.f); level5Locked.setScale(.30f, .30f);
+
+
     //--------------------------------------------------------------------------------------------------------
 
     RenderWindow levelsWindow(VideoMode(800, 600), "Levels");
@@ -492,7 +506,11 @@ void Game::runLVLwindow() {
     View camera(FloatRect(0, 0, 800, 600));
     levelsWindow.setView(camera);
 
-   
+
+    if (level1.gemTaskAmount == 0) { level1.isUnlocked = true; level2.isUnlocked == true; cout << "Level 2 just got unlocked :D" << endl; }
+    if (level2.gemTaskAmount == 0) { level3.isUnlocked = true; }
+    if (level3.gemTaskAmount == 0) { level4.isUnlocked = true; }
+    if (level4.gemTaskAmount == 0) { level5.isUnlocked = true; }
    
 
     while (levelsWindow.isOpen()) {
@@ -508,11 +526,14 @@ void Game::runLVLwindow() {
                 Vector2i mousePos = Mouse::getPosition(levelsWindow);
                 Vector2f mousePosF = levelsWindow.mapPixelToCoords(mousePos);
 
-                if (level1Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level1; levelsWindow.close(); runSecondWindow(level1);   }
+                if (level1Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level1; levelsWindow.close(); runSecondWindow(level1);  }
                 if (level2Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level2; levelsWindow.close(); runSecondWindow(level2);  }
-                if (level3Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level3; levelsWindow.close(); runSecondWindow(level3);   }
-                if (level4Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level4; levelsWindow.close(); runSecondWindow(level4);   }
+                if (level3Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level3; levelsWindow.close(); runSecondWindow(level3);  }
+                if (level4Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level4; levelsWindow.close(); runSecondWindow(level4);  }
                 if (level5Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level5; levelsWindow.close(); runSecondWindow(level5);  }
+                
+                
+            
             }
         }
 
@@ -531,17 +552,43 @@ void Game::runLVLwindow() {
         levelsWindow.setView(camera);        
 
 
+        
       
+
         levelsWindow.clear();
         levelsWindow.draw(bgSprite);
         levelsWindow.draw(level1Button);
-        levelsWindow.draw(level2Button); 
-        levelsWindow.draw(level3Button); 
-        levelsWindow.draw(level4Button); 
-        levelsWindow.draw(level5Button);
+        if (level1.isUnlocked) {
+            levelsWindow.draw(level2Button);
+        }
+        else {
+            levelsWindow.draw(level2Locked);
+        }
+
+        if (level2.isUnlocked) {
+            levelsWindow.draw(level3Button);
+        }
+        else {
+            levelsWindow.draw(level3Locked);
+        }
+
+        if (level3.isUnlocked) {
+            levelsWindow.draw(level4Button);
+        }
+        else {
+            levelsWindow.draw(level4Locked);
+        }
+        if (level4.isUnlocked) {
+            levelsWindow.draw(level5Button);
+        }
+        else {
+            levelsWindow.draw(level5Locked);
+        }
+       
         levelsWindow.display();
 
     }
+
 }
 
 
@@ -555,7 +602,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
 
     Texture swapB; swapB.loadFromFile("assets/swapBooster.png");
     Sprite swapBooster;
-    swapBooster.setTexture(swapB); swapBooster.setPosition(500.f, 100.f);
+    swapBooster.setTexture(swapB); swapBooster.setPosition(900.f, 300.f);
     swapBooster.setScale(.10f, .10f);
     
     Board board(config);
@@ -570,9 +617,8 @@ void Game::runSecondWindow(const LevelConfig& config) {
     board.initBar();
 
     // Info of the specific level
-    cout << "Starting level " << config.levelNumber << endl;
-    cout << "Moves: " << config.moves << " | Target: " << config.targetScore << endl;
-    cout << "Type of Gem: " << config.gemTask << endl;
+    cout << "Level " << config.levelNumber << endl;
+    cout << "Moves: " << config.moves << " | Target: " << config.targetScore << " | Type of Gem : " << config.gemTask << endl;
     cout << "Amount of gems to collect: " << config.gemTaskAmount << endl;
    
     while (gameWindow.isOpen()) {
@@ -609,6 +655,10 @@ void Game::runSecondWindow(const LevelConfig& config) {
              }
 
 
+            }
+
+            if (config.levelNumber == 1 && config.gemTaskAmount == 0) {
+                
             }
             
             gameWindow.draw(spriteCursor);
@@ -712,5 +762,15 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount) {
 
         }
     }
+
+}
+
+void Game::unlockLevels(int gemTaskAmount) {
+
+
+
+
+
+
 
 }

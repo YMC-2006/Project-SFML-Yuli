@@ -72,7 +72,8 @@ public:
 
 
 	void initBar(); // Inicializes the bar we call this function only once
-	void updateGemTaskProgress(); // sets the thereIsMatch variable
+	void updateGemTaskProgress(int gemsMatchedOfTask); // sets the thereIsProgress variable
+	int countGemTaskMatches();
 	void barProgress(RenderWindow& window, Event& event,bool thereIsMatch); // Updates and draws the bar progress
 	bool progress(); void setProgress(bool p); // sets and gets
 	

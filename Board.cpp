@@ -44,7 +44,7 @@ void Board::drawScene(RenderWindow& window, Event& event) {
 
     Texture swapB; swapB.loadFromFile("assets/swapBooster.png");
     Sprite swapBooster;
-    swapBooster.setTexture(swapB); swapBooster.setPosition(500.f,100.f);
+    swapBooster.setTexture(swapB); swapBooster.setPosition(900.f, 300.f);
     swapBooster.setScale(.10f,.10f);
 
     Texture cursor;
@@ -224,14 +224,14 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         cout << "Double match [" << x2 << "][" << y2 << "]\n";
 
 
-                                        updateGemTaskProgress();
+                                      
 
 
                                     }
                                     else if (m1) {
                                         cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
 
-                                        updateGemTaskProgress();
+                                       
                                         centerX = x1;
                                         centerY = y1;
 
@@ -240,12 +240,13 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     else if (m2) {
                                         cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
 
-                                        updateGemTaskProgress();
+                                       
                                         centerX = x2;
                                         centerY = y2;
                                     }
 
-                                    int totalMatched = 0;
+                                    int totalMatched = 0; // total gems matched in general (task and no task)
+                                    int totalGemTaskMatched = 0; // total gems task
                                     cout << "A match was found :D" << endl;
 
                                     int gemsMatchedPoints = countPoints(); // returns total with values per type
@@ -253,7 +254,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     pointsCounter += gemsMatchedPoints;
                                     totalMoves -= 1;
 
-
+                                    totalGemTaskMatched += countGemTaskMatches();
                                     floatingTexts(window, (gemsMatchedPoints / 10));
 
 
@@ -277,14 +278,16 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                             totalMatched += cascadeMatch;
                                             pointsCounter += cascadeMatch;
                                             floatingTexts(window, cascadeMatch);
-                                            updateGemTaskProgress();
+                                            totalGemTaskMatched += countGemTaskMatches();
                                         }
                                     }
 
+                                    if (totalGemTaskMatched > 0) {
+                                        updateGemTaskProgress(totalGemTaskMatched);
+                                    }
 
 
-
-                                    /*if (gemsMatched >= 4 && enableBombGems) {
+                                   /* if (gemsMatchedPoints >= 4 && enableBombGems) {
 
                                         int type = matrix[centerX][centerY]->getType();
                                         Vector2f gemPos = matrix[centerX][centerY]->getSprite().getPosition();
@@ -295,11 +298,12 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
 
 
-                                    }*/
+                                    } */
 
                                     if (totalMoves <= 0) {
                                         window.close();
                                         game.runThirdWindow(pointsCounter, gemTaskAmount);
+                                        game.unlockLevels(gemTaskAmount);
                                     }
 
 
@@ -350,36 +354,33 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 }
 
 
-void Board::updateGemTaskProgress() {
+void Board::updateGemTaskProgress(int gemsMatchedOfTask) {
 
+    if (gemsMatchedOfTask <= 0) return;
     
-    int gemsFound = 0;
+    gemTaskAmount -= gemsMatchedOfTask;
+    if (gemTaskAmount < 0) gemTaskAmount = 0;
+
+    barPoints = gemsMatchedOfTask;
+    cout << "Gems task found " << gemsMatchedOfTask << endl;
+    thereIsProgress = true;
+    setProgress(thereIsProgress);
+
+}
+
+int Board::countGemTaskMatches() {
+
+    int total = 0;
 
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            int type = matrix[i][j]->getType();
-
-            if (type == -1) continue;
-
-            // if theres a match and is the right type (same type as the task) it counts
-            if (type == gemTask && checkMatchAt(i, j)) {
-                gemsFound++;
+            if (checkMatchAt(i,j) && matrix[i][j]->getType() == gemTask) {
+                total++;
             }
         }
     }
 
-    if (gemsFound >= 3) {
-        gemTaskAmount -= gemsFound;
-        if (gemTaskAmount < 0) gemTaskAmount = 0;
-
-        barPoints = gemsFound; // for the bar
-        thereIsProgress = true;
-        setProgress(thereIsProgress);
-
-        cout << "Gem task progress (cascade included): " << gemsFound<< endl;
-        cout << "Bar points: " << barPoints << endl;
-    }
-
+    return total;
 }
 
 

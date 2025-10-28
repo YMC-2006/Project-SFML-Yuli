@@ -1,9 +1,8 @@
 # Match-3 🚀
 Este proyecto es un juego tipo Match-3 desarrollado para el curso de Programación I. El objetivo es que el jugador  sume puntos y complete la tarea del nivel al hacer matches con gemas adyacentes del mismo tipo, ya sea en horizontal o vertical, para que desaparezcan y se rellene el tablero, el juego cuenta con gemas normales, gemas de hielo y gemas bomba, lo que hace que sea más desafiante y divertido
 
-**Tecnologias**
+## Tecnologias
 Lenguage de programación usado: C++
-
 Librería: SFML
 
 ## Requisitos Previos

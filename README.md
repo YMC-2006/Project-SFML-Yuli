@@ -30,3 +30,10 @@ Este proyecto fue desarrollado por Yuliana Mora Cedeño como parte del curso de 
 
 ## Contacto
 Si tienes alguna pregunta, puedes contactar a Yuliana Mora Cedeño a través del correo yuliana.mora.cedeno@est.una.ac.cr
+
+## Preview del juego
+<img width="789" height="633" alt="image" src="https://github.com/user-attachments/assets/d7be84b5-0941-4e2c-8023-80b388bc945d" />
+<img width="988" height="830" alt="image" src="https://github.com/user-attachments/assets/d7359cd0-1666-47de-b6e6-0bb91134bb95" />
+<img width="588" height="441" alt="image" src="https://github.com/user-attachments/assets/cebd00f0-17dd-4d57-a2cf-fce75512cd39" />
+
+

@@ -3,6 +3,7 @@ Este proyecto es un juego tipo Match-3 desarrollado para el curso de Programaci�
 
 **Tecnologias**
 Lenguage de programación usado: C++
+
 Librería: SFML
 
 ## Requisitos Previos

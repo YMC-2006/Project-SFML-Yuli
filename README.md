@@ -3,9 +3,11 @@ Este proyecto es un juego tipo Match-3 desarrollado para el curso de Programaci�
 
 ## Tecnologias
 Lenguage de programación usado: C++
+
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
 
 Librería: SFML
+
 ![SFML](https://img.shields.io/badge/SFML-303133.svg?style=for-the-badge&logo=sfml&logoColor=white)
 
 ## Requisitos Previos

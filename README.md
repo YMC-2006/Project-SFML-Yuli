@@ -3,7 +3,10 @@ Este proyecto es un juego tipo Match-3 desarrollado para el curso de Programaci�
 
 ## Tecnologias
 Lenguage de programación usado: C++
+![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)
+
 Librería: SFML
+![SFML](https://img.shields.io/badge/SFML-303133.svg?style=for-the-badge&logo=sfml&logoColor=white)
 
 ## Requisitos Previos
 Antes de ejecutar el juego, asegúrate de tener instalado lo siguiente:
@@ -14,7 +17,6 @@ Versión de SFML 2.6.2
 ```
 https://github.com/YMC-2006/Project-SFML-Yuli.git
 ```
-
 
 ## Reglas del juego
 1. Consigue puntos al alinear 3 o más fichas del mismo tipo.

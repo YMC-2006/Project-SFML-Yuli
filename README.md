@@ -1,7 +1,7 @@
 # Match-3 🚀
 Este proyecto es un juego tipo Match-3 desarrollado para el curso de Programación I. El objetivo es que el jugador  sume puntos y complete la tarea del nivel al hacer matches con gemas adyacentes del mismo tipo, ya sea en horizontal o vertical, para que desaparezcan y se rellene el tablero, el juego cuenta con gemas normales, gemas de hielo y gemas bomba, lo que hace que sea más desafiante y divertido
 
-## Tecnologias
+## Tecnologías
 Lenguage de programación usado: C++
 
 ![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)

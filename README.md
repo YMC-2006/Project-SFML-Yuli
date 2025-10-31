@@ -17,7 +17,7 @@ Versión de SFML 2.6.2
 ## Instalación
 1. Clona este repositorio:
 ```
-https://github.com/YMC-2006/Project-SFML-Yuli.git
+git clone https://github.com/YMC-2006/Project-SFML-Yuli.git
 ```
 
 ## Reglas del juego

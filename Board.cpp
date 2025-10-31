@@ -71,23 +71,8 @@ void Board::fillMatrix() {
             
             
             randType = noInitialMatch(i,j); //Obtains the correct texture, not 3 equals in the same row
-            if (i==0 && j==0 && enableBombGems) {
-                matrix[i][j] = new BombGem(randType);
-            }
-            else if (i == 4 && j == 4 && hasIceBlocks) {
-                matrix[i][j] = new IceGem(randType);
-            }
-            else if (i == 5 && j == 5 && hasIceBlocks) {
-                matrix[i][j] = new IceGem(randType);
-            }
-            else if (i == 2 && j == 2 && hasIceBlocks) {
-                matrix[i][j] = new BombGem(randType);
-            }
-            else {
-                matrix[i][j] = new Gem();
-                matrix[i][j]->initGem(randType);
-            }
-           
+            matrix[i][j] = new Gem();
+            matrix[i][j]->initGem(randType);
 			matrix[i][j]->getSprite().setPosition(250 + 70.f * i, 200 + 70.f * j);
 			matrix[i][j]->getSprite().setOrigin(
 				matrix[i][j]->getSprite().getTexture()->getSize().x / 2.f,
@@ -131,7 +116,6 @@ void Board::activateBooster() {
 }
 
 
-
 void Board::swapGems(RenderWindow& window, Event& event) {
 
 
@@ -151,18 +135,13 @@ void Board::swapGems(RenderWindow& window, Event& event) {
     errorSound.setBuffer(errorBuffer);
 
 
-    Font font;
-    font.loadFromFile("arial.ttf");
-    Text noMatchText("No match FOUND !!!", font, 30); noMatchText.setFillColor(Color::Red);
-    noMatchText.setPosition(350.f, 750.f);
-
-
+   
 
     if (event.type == Event::MouseButtonPressed) {
         Vector2i mousePos = Mouse::getPosition(window);
         Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-        thereIsProgress = false; // I had to put it here again as false bc, if there a match, the variable stays on true, even if we are then just randomly clicking on another gem
-        setProgress(thereIsProgress); // and it works here and not if the user clicks on the gem because it sets false, if the user clicks on the gem but what if the user click on any other part of the screen
+        thereIsTaskMatch = false; // I had to put it here again as false bc, if there a match, the variable stays on true, even if we are then just randomly clicking on another gem
+        setProgress(thereIsTaskMatch); // and it works here and not if the user clicks on the gem because it sets false, if the user clicks on the gem but what if the user click on any other part of the screen
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -182,7 +161,8 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                         x1 = i;
                         y1 = j;
                         cout << "First [" << i << "][" << j << "]" << endl;
-
+                       
+                        
                     }
                     else {
 
@@ -215,6 +195,8 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                 bool m1 = checkMatchAt(x1, y1);
                                 bool m2 = checkMatchAt(x2, y2);
                                 int centerX = 0, centerY = 0;
+                                int type1 = 0;
+                                int type2 = 0;
 
                                 if (checkMatchAt(x1, y1) || checkMatchAt(x2, y2)) { // If there is a match we add points and delete the match, then call the gravity func
 
@@ -230,19 +212,18 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     }
                                     else if (m1) {
                                         cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
-
+                                        type1 = matrix[x1][y1]->getType();
+                                        cout << "Gem type: " << type1 << endl;
                                        
-                                        centerX = x1;
-                                        centerY = y1;
+                                       
 
                                     }
 
                                     else if (m2) {
                                         cout << "Match on x2,y2  [" << x2 << "][" << y2 << "]\n";
-
+                                        type2 = matrix[x2][y2]->getType();
+                                        cout << "Gem type:" << type2<<endl;
                                        
-                                        centerX = x2;
-                                        centerY = y2;
                                     }
 
                                     int totalMatched = 0; // total gems matched in general (task and no task)
@@ -256,10 +237,38 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
                                     totalGemTaskMatched += countGemTaskMatches();
                                     floatingTexts(window, (gemsMatchedPoints / 10));
+                                   
+                                    
+                                    // Generate bomb gem!!! 
+                                    if ((gemsMatchedPoints / 10) >= 4 && enableBombGems) {
+                                        const float offsetX = 250.f;
+                                        const float offsetY = 200.f;
+                                        const float tileSize = 70.f;
 
+                                        if (m1) {
+                                            matrix[x1][y1] = new BombGem(type1);
+                                            matrix[x1][y1]->getSprite().setPosition(offsetX + tileSize * x1,
+                                                offsetY + tileSize * y1);
+
+                                        }
+                                        else if (m2) {
+                                            matrix[x2][y2] = new BombGem(type2);
+                                            matrix[x2][y2]->getSprite().setPosition(offsetX + tileSize * x2,
+                                                offsetY + tileSize * y2);
+
+                                        }
+                                        else if (m1 && m2) {
+                                            cout << "Double matches dont generate bomb gems =D" << endl;
+
+                                        }
+
+                                    }
+                                    
+                                   
 
                                     // Cascade Loop
                                     while (deleteMatch(window)) {
+                                       
                                         pullGravity();
                                         animateGravity(window);
 
@@ -286,24 +295,17 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         updateGemTaskProgress(totalGemTaskMatched);
                                     }
 
+                                  
+                                   
 
-                                   /* if (gemsMatchedPoints >= 4 && enableBombGems) {
-
-                                        int type = matrix[centerX][centerY]->getType();
-                                        Vector2f gemPos = matrix[centerX][centerY]->getSprite().getPosition();
-                                        delete matrix[centerX][centerY];
-                                        matrix[centerX][centerY] = new BombGem(type);
-                                        matrix[centerX][centerY]->getSprite().setPosition(gemPos);
-
-
-
-
-                                    } */
+                                        
+                                    
+                                   
 
                                     if (totalMoves <= 0) {
                                         window.close();
-                                        game.runThirdWindow(pointsCounter, gemTaskAmount);
-                                        game.unlockLevels(gemTaskAmount);
+                                        game.runThirdWindow(pointsCounter, gemTaskAmount, levelNumber);
+                                       
                                     }
 
 
@@ -321,7 +323,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         swap(matrix[x1][y1], matrix[x2][y2]); // Back to normal 
                                         cout << "No match :v" << endl;
                                         
-                                        //window.draw(noMatchText);
+                                       
                                     }
                                    
 
@@ -354,6 +356,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 }
 
 
+
 void Board::updateGemTaskProgress(int gemsMatchedOfTask) {
 
     if (gemsMatchedOfTask <= 0) return;
@@ -363,8 +366,8 @@ void Board::updateGemTaskProgress(int gemsMatchedOfTask) {
 
     barPoints = gemsMatchedOfTask;
     cout << "Gems task found " << gemsMatchedOfTask << endl;
-    thereIsProgress = true;
-    setProgress(thereIsProgress);
+    thereIsTaskMatch = true;
+    setProgress(thereIsTaskMatch);
 
 }
 
@@ -426,13 +429,13 @@ bool Board::checkMatchAt(int x, int y) {
 
 
 bool Board::progress() {
-    return thereIsProgress;
+    return thereIsTaskMatch;
 }
 
 
 
 void Board::setProgress(bool p) {
-    thereIsProgress = p;
+    thereIsTaskMatch = p;
 }
 
 int Board::countPoints() {
@@ -639,7 +642,7 @@ void Board::initBar() {
    
 }
 
-void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
+void Board::barProgress(RenderWindow& window, Event& event, bool thereIsTaskMatch) {
    
     // Personalized colors by me ;D
     Color Green(67, 219, 38); 
@@ -650,7 +653,7 @@ void Board::barProgress(RenderWindow& window, Event& event, bool thereIsMatch) {
         Vector2i mousePos = Mouse::getPosition(window);
         Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
        
-        if (thereIsMatch) {
+        if (thereIsTaskMatch) {
           
             if (currentProgressPoints < targetProgressPoints) {
 
@@ -704,7 +707,8 @@ void Board::drawText(RenderWindow& window) {
     window.draw(points);
     window.draw(moves);
     window.draw(task);
-    if (gemTaskAmount == 0 && getGemTask() == 0) {
+
+    if (gemTaskAmount == 0 && getGemTask() == 0) { 
         window.draw(gemPurpleAccomplished);
     }
     else if (gemTaskAmount == 0 && getGemTask() == 1) {
@@ -760,7 +764,7 @@ void Board::animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPo
 
     Vector2f start1 = g1.getSprite().getPosition();
     Vector2f start2 = g2.getSprite().getPosition();
-    Event event;
+   
     while (elapsed < duration) {
         float dt = clock.restart().asSeconds();
         elapsed += dt;

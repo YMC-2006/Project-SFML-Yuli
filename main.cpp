@@ -11,7 +11,7 @@ int main(){
     
     srand(time(NULL));
     Game game; // my game
-    game.runMainWindow();
+    game.runGame();
 
     return 0;
 }

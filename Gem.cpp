@@ -24,7 +24,7 @@ void Gem::loadTextures() {
     textures[4].loadFromFile("assets/redGem.png");
 
     texturesLoaded = true;
-    cout << "Gem textures loaded successfully.\n";
+   
 }
 
 

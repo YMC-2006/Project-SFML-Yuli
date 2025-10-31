@@ -41,7 +41,7 @@ private:
 	int barPoints;
 	RectangleShape outline;
 	RectangleShape fill;
-	bool thereIsProgress = false;
+	bool thereIsTaskMatch = false;
 	
 	
 	
@@ -56,6 +56,7 @@ public:
 	void drawBoard(RenderWindow &gameWindow);
 	void activateBooster();
 	void swapGems(RenderWindow& gameWindow, Event& event);
+	//void generateBombGems(int x1, int y1, int x2, int y2, int matchedGems, bool enableBombGems, bool m1, bool m2, int type1, int type2);
 	bool checkMatchAt(int x, int y);
 	void animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window);
 	bool deleteMatch(RenderWindow& window);
@@ -74,7 +75,7 @@ public:
 	void initBar(); // Inicializes the bar we call this function only once
 	void updateGemTaskProgress(int gemsMatchedOfTask); // sets the thereIsProgress variable
 	int countGemTaskMatches();
-	void barProgress(RenderWindow& window, Event& event,bool thereIsMatch); // Updates and draws the bar progress
+	void barProgress(RenderWindow& window, Event& event,bool thereIsTaskMatch); // Updates and draws the bar progress
 	bool progress(); void setProgress(bool p); // sets and gets
 	
 

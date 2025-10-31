@@ -7,16 +7,18 @@ using namespace sf;
 class Game {
 private:
 
-	LevelConfig lastLevel { 1, 20, 1000, 10, false, false };
-	
+	vector<LevelConfig> levels;
 
 public:
 
-	void runMainWindow();
+	Game();
+	void runGame();
+	void runLevelsWindow();
 	void runSecondWindow(const LevelConfig& config);
-	void runThirdWindow(int finalScore, int gemTaskAmount);
-	void runLVLwindow();
+	void runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted);
+	
 
-	void unlockLevels(int gemTaskAmount);
+	void updateUnlockedLevels(vector<LevelConfig>& levels, int completedLevel);
+	void setLevels(int index, bool complete);
 
 };

@@ -27,6 +27,10 @@ IceGem::IceGem(int type) {
 	this->type = type;
 	sprite.setTexture(iceTextures[type]);
 
+	sprite.setOrigin(sprite.getTexture()->getSize().x / 2.f,
+	sprite.getTexture()->getSize().y / 2.f);
+	sprite.setScale(.70f, .70f);
+
 }
 
 

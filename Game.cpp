@@ -7,7 +7,22 @@
 using namespace std;
 using namespace sf;
 
-void Game::runMainWindow() {
+
+Game::Game() {
+
+    levels = {
+    //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl, swap booster
+    { 1, 12, 1000, 1, 0, false, false, true, false}, // Purple Gem
+    { 2, 12, 2000, 1, 1, false, true, true, false},  // Yellow Gem
+    { 3, 12, 3000, 2, 2, true, true, true, false},   // Green Gem
+    { 4, 12, 4000, 3, 3, false, true, false, false}, // Blue Gem
+    { 5, 12, 5000, 1, 4, false, true, false, true } // Red Gem
+
+    };
+
+}
+
+void Game::runGame() {
     cout << "Running game!"<<endl;
     RenderWindow windowMain(VideoMode(800, 600), "MATCH-3");
 
@@ -61,11 +76,11 @@ void Game::runMainWindow() {
 
     // Load textures
     Texture texPurple, texBlue, texYellow, texGreen, texRed;
-    texPurple.loadFromFile("assets/purpleIceGem.png");
+    texPurple.loadFromFile("assets/gemBombPurple.png");
     texBlue.loadFromFile("assets/blueGem.png");
     texYellow.loadFromFile("assets/gemBombYellow.png");
     texGreen.loadFromFile("assets/greenGem.png");
-    texRed.loadFromFile("assets/redGem.png");
+    texRed.loadFromFile("assets/gemBombRed.png");
 
     // create sprites
     Sprite purple(texPurple), blue(texBlue), yellow(texYellow), green(texGreen), red(texRed);
@@ -150,7 +165,7 @@ void Game::runMainWindow() {
                 if (event.type == Event::MouseButtonPressed) {
                     clickSound.play();
                     windowMain.close();
-                    runLVLwindow();
+                    runLevelsWindow();
                    
                 }
                 else {
@@ -448,21 +463,12 @@ void Game::runMainWindow() {
     }
 }
         
-void Game::runLVLwindow() {
-     
-    //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl, swap booster
-
-    LevelConfig level1{ 1, 15, 1000, 20, 0, false, false, false, false};  // Purple Gem
-    LevelConfig level2{ 2, 25, 2000, 15, 1, false, true, false, false};  // Yellow Gem
-    LevelConfig level3{ 3, 15, 3000, 20, 2, true, true, false, false};   // Green Gem
-    LevelConfig level4{ 4, 25, 4000, 30, 3, false, false, false, false}; // Blue Gem
-    LevelConfig level5{ 5, 10, 5000, 12, 4, false, false, false, true }; // Red Gem
-
+void Game::runLevelsWindow() {
 
     Texture txLevel1; txLevel1.loadFromFile("assets/level1Unlocked.png");
     Sprite level1Button(txLevel1); level1Button.setPosition(70.f, 180.f); level1Button.setScale(.30f, .30f);
 
-    Texture txLevel2; txLevel2.loadFromFile("assets/level2Unlocked.png");
+    Texture txLevel2; txLevel2.loadFromFile("assets/level2Unlocked.png"); 
     Sprite level2Button(txLevel2); level2Button.setPosition(450.f, 350.f); level2Button.setScale(.30f, .30f);
 
     Texture txLevel3; txLevel3.loadFromFile("assets/level3Unlocked.png");
@@ -476,20 +482,7 @@ void Game::runLVLwindow() {
 
     //----------------------------------------------------------------------------------------------------------
 
-    Texture txLevel2L; txLevel2L.loadFromFile("assets/level2Locked.png");
-    Sprite level2Locked(txLevel2L); level2Locked.setPosition(450.f, 350.f); level2Locked.setScale(.30f,.30f);
-
-    Texture txLevel3L; txLevel3L.loadFromFile("assets/level3Locked.png");
-    Sprite level3Locked(txLevel3L); level3Locked.setPosition(90.f, 560.f); level3Locked.setScale(.30f, .30f);
-
-    Texture txLevel4L; txLevel4L.loadFromFile("assets/level4Locked.png");
-    Sprite level4Locked(txLevel4L); level4Locked.setPosition(450.f, 800.f); level4Locked.setScale(.30f, .30f);
-
-    Texture txLevel5L; txLevel5L.loadFromFile("assets/level5Locked.png");
-    Sprite level5Locked(txLevel5L); level5Locked.setPosition(70.f, 1100.f); level5Locked.setScale(.30f, .30f);
-
-
-    //--------------------------------------------------------------------------------------------------------
+   
 
     RenderWindow levelsWindow(VideoMode(800, 600), "Levels");
     Texture bgTexture; bgTexture.loadFromFile("assets/backgroundLevel.png");
@@ -500,17 +493,31 @@ void Game::runLVLwindow() {
 
     clickBuffer.loadFromFile("assets/clickSound.wav");
     clickSound.setBuffer(clickBuffer);
+
+
+    static SoundBuffer errorBuffer;
+    static Sound clickErrorSound;
+
+    errorBuffer.loadFromFile("assets/errorSound.wav");
+    clickErrorSound.setBuffer(errorBuffer);
    
 
     const float scrollSpeed = 10.f;
     View camera(FloatRect(0, 0, 800, 600));
     levelsWindow.setView(camera);
 
+    if (!levels[1].isUnlocked) { level2Button.setColor(Color(255, 255, 255, 128));  cout << "Levels 2 is locked again"<<endl;}
+    else { level2Button.setColor(Color(255, 255, 255, 255)); cout << "Level 2 in UNLOCKED PLAYY"<<endl; }
 
-    if (level1.gemTaskAmount == 0) { level1.isUnlocked = true; level2.isUnlocked == true; cout << "Level 2 just got unlocked :D" << endl; }
-    if (level2.gemTaskAmount == 0) { level3.isUnlocked = true; }
-    if (level3.gemTaskAmount == 0) { level4.isUnlocked = true; }
-    if (level4.gemTaskAmount == 0) { level5.isUnlocked = true; }
+    if (!levels[2].isUnlocked) { level3Button.setColor(Color(255, 255, 255, 128)); }
+    else { level2Button.setColor(Color(255, 255, 255, 255)); }
+
+    if (!levels[3].isUnlocked) { level4Button.setColor(Color(255, 255, 255, 128)); }
+    else { level4Button.setColor(Color(255, 255, 255, 255)); }
+
+    if (!levels[4].isUnlocked) { level5Button.setColor(Color(255, 255, 255, 128)); }
+    else { level5Button.setColor(Color(255, 255, 255, 255)); }
+ 
    
 
     while (levelsWindow.isOpen()) {
@@ -522,20 +529,29 @@ void Game::runLVLwindow() {
             if (event.type == Event::MouseWheelScrolled)
                 camera.move(0, -event.mouseWheelScroll.delta * scrollSpeed);
 
+           
+
             if (event.type == Event::MouseButtonPressed) {
                 Vector2i mousePos = Mouse::getPosition(levelsWindow);
                 Vector2f mousePosF = levelsWindow.mapPixelToCoords(mousePos);
 
-                if (level1Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level1; levelsWindow.close(); runSecondWindow(level1);  }
-                if (level2Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level2; levelsWindow.close(); runSecondWindow(level2);  }
-                if (level3Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level3; levelsWindow.close(); runSecondWindow(level3);  }
-                if (level4Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level4; levelsWindow.close(); runSecondWindow(level4);  }
-                if (level5Button.getGlobalBounds().contains(mousePosF)) { clickSound.play(); lastLevel = level5; levelsWindow.close(); runSecondWindow(level5);  }
+              
+
+                if (level1Button.getGlobalBounds().contains(mousePosF) && levels[0].isUnlocked) { clickSound.play(); levelsWindow.close(); runSecondWindow(levels[0]); }
+                if (level2Button.getGlobalBounds().contains(mousePosF) && levels[1].isUnlocked) { clickSound.play(); levelsWindow.close(); runSecondWindow(levels[1]); }
+                if (level3Button.getGlobalBounds().contains(mousePosF) && levels[2].isUnlocked) { clickSound.play(); levelsWindow.close(); runSecondWindow(levels[2]); }
+                if (level4Button.getGlobalBounds().contains(mousePosF) && levels[3].isUnlocked) { clickSound.play(); levelsWindow.close(); runSecondWindow(levels[3]); }
+                if (level5Button.getGlobalBounds().contains(mousePosF) && levels[4].isUnlocked) { clickSound.play(); levelsWindow.close(); runSecondWindow(levels[4]); }
                 
                 
+                
+               
             
             }
+           
         }
+
+
 
         //in case the user tries to scroll with the keyboard :)
         if (Keyboard::isKeyPressed(Keyboard::Up)) camera.move(0, -scrollSpeed);
@@ -551,46 +567,22 @@ void Game::runLVLwindow() {
         camera.setCenter(pos);
         levelsWindow.setView(camera);        
 
+       
 
-        
-      
 
         levelsWindow.clear();
         levelsWindow.draw(bgSprite);
         levelsWindow.draw(level1Button);
-        if (level1.isUnlocked) {
-            levelsWindow.draw(level2Button);
-        }
-        else {
-            levelsWindow.draw(level2Locked);
-        }
-
-        if (level2.isUnlocked) {
-            levelsWindow.draw(level3Button);
-        }
-        else {
-            levelsWindow.draw(level3Locked);
-        }
-
-        if (level3.isUnlocked) {
-            levelsWindow.draw(level4Button);
-        }
-        else {
-            levelsWindow.draw(level4Locked);
-        }
-        if (level4.isUnlocked) {
-            levelsWindow.draw(level5Button);
-        }
-        else {
-            levelsWindow.draw(level5Locked);
-        }
+        levelsWindow.draw(level2Button);
+        levelsWindow.draw(level3Button);
+        levelsWindow.draw(level4Button);
+        levelsWindow.draw(level5Button);
        
         levelsWindow.display();
 
     }
 
 }
-
 
 void Game::runSecondWindow(const LevelConfig& config) {
 
@@ -633,6 +625,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
             if (Keyboard::isKeyPressed(Keyboard::Escape)) gameWindow.close();
             float deltaTime = clock.restart().asSeconds();
 
+
             gameWindow.clear();
             gameWindow.draw(spriteBackImg);
             board.drawBoard(gameWindow);
@@ -645,6 +638,9 @@ void Game::runSecondWindow(const LevelConfig& config) {
            
             bool isThereMatch = board.progress();
             board.barProgress(gameWindow, event, isThereMatch);
+
+           
+            
             if (config.levelNumber == 5) {
              gameWindow.draw(swapBooster);
              if (event.type == Event::MouseButtonPressed) {
@@ -652,24 +648,26 @@ void Game::runSecondWindow(const LevelConfig& config) {
                  if (config.swapBooster && swapBooster.getGlobalBounds().contains(mousePosF)) {
                      board.activateBooster();
                  }
-             }
 
 
-            }
-
-            if (config.levelNumber == 1 && config.gemTaskAmount == 0) {
                 
+             }
             }
+
+            
             
             gameWindow.draw(spriteCursor);
-
             gameWindow.display();
 
         }
+
+       
     }
+
+    
 }
 
-void Game::runThirdWindow(int finalScore, int gemTaskAmount) {
+void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted) {
 
     
 
@@ -710,6 +708,12 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount) {
     RenderWindow returnWindow(VideoMode(600, 400), "PLAY AGAIN!!");
     if (gemTaskAmount == 0) cout << "You won";
     else cout << "you lost";
+
+    if (gemTaskAmount <= 0) {
+        cout << "Level " << levelCompleted << " completed!! ";
+        updateUnlockedLevels(levels, levelCompleted);
+    }
+
     returnWindow.setMouseCursorVisible(false);
     while (returnWindow.isOpen()) {
         Event event;
@@ -727,9 +731,9 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount) {
 
                 if (playAgain.getGlobalBounds().contains(mousePosF)) {
                     returnWindow.close();
-                    runLVLwindow();
+                    runLevelsWindow();
                     return;
-                    
+                        
                 }
 
                 if (exitSprite.getGlobalBounds().contains(mousePosF)) {
@@ -740,7 +744,7 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount) {
 
                 if (homeSprite.getGlobalBounds().contains(mousePosF)) {
                     returnWindow.close();
-                    runMainWindow();
+                    runGame();
                     return;
                 }
             }
@@ -765,12 +769,19 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount) {
 
 }
 
-void Game::unlockLevels(int gemTaskAmount) {
+void Game::updateUnlockedLevels(vector<LevelConfig>& levels, int completedLevel) {
 
+    if (completedLevel < 1 || completedLevel >= levels.size()) return;
 
+    levels[completedLevel].isUnlocked = true;
+   
+    cout << "Level " << completedLevel + 1 << " just got unlocked!!!"<<endl;
 
+    
+}
 
+void Game::setLevels(int index, bool complete) {
 
-
+    levels[index].isUnlocked = complete;
 
 }

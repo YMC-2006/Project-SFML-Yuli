@@ -32,11 +32,9 @@ Este proyecto fue desarrollado por Yuliana Mora Cedeño como parte del curso de 
 Si tienes alguna pregunta, puedes contactar a Yuliana Mora Cedeño a través del correo yuliana.mora.cedeno@est.una.ac.cr
 
 ## CHANGELOG.md
+![CHANGELOG](https://img.shields.io/badge/Changelog-View-lightblue)
 ```
-![CHANGELOG](https://img.shields.io/badge/Changelog-View-lightblue)(CHANGELOG.md)
-
-Ver historial de cambios (CHANGELOG)
-(CHANGELOG.md)
+Ver historial de cambios (CHANGELOG.md)
 ```
 
 ## Preview del juego

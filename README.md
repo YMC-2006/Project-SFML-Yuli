@@ -33,8 +33,8 @@ Si tienes alguna pregunta, puedes contactar a Yuliana Mora Cedeño a través del
 
 ## CHANGELOG.md
 ```
- [Ver historial de cambios (CHANGELOG)](CHANGELOG.md)
-
+Ver historial de cambios (CHANGELOG)
+(CHANGELOG.md)
 ```
 
 ## Preview del juego

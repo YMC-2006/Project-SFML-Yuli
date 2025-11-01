@@ -16,7 +16,7 @@ private:
 public:
 	BombGem(int type = 0);
 	~BombGem();
-	
 	int getPointsValue() const override { return 15; }  // polymorphism
+	virtual bool isBombGem() const override { return true; }
 	
 };

@@ -60,6 +60,7 @@ public:
 	bool checkMatchAt(int x, int y);
 	void animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window);
 	bool deleteMatch(RenderWindow& window);
+	bool deleteRowOrColumns(RenderWindow& window);
 	int countPoints();
 	
 	

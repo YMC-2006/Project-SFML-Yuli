@@ -245,20 +245,22 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         const float offsetY = 200.f;
                                         const float tileSize = 70.f;
 
-                                        if (m1) {
+                                        if (m1 && m2) {
+                                            cout << "Double matches dont generate bomb gems =D" << endl;
+
+
+                                        }
+                                        else if (m1) {
                                             matrix[x1][y1] = new BombGem(type1);
                                             matrix[x1][y1]->getSprite().setPosition(offsetX + tileSize * x1,
                                                 offsetY + tileSize * y1);
+
 
                                         }
                                         else if (m2) {
                                             matrix[x2][y2] = new BombGem(type2);
                                             matrix[x2][y2]->getSprite().setPosition(offsetX + tileSize * x2,
                                                 offsetY + tileSize * y2);
-
-                                        }
-                                        else if (m1 && m2) {
-                                            cout << "Double matches dont generate bomb gems =D" << endl;
 
                                         }
 
@@ -296,6 +298,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     }
 
                                   
+                                    
                                    
 
                                         
@@ -542,6 +545,10 @@ bool Board::deleteMatch(RenderWindow& window) {
     }
 
     return found;
+}
+
+bool Board::deleteRowOrColumns(RenderWindow& window) {
+
 }
 
 void Board::pullGravity() {

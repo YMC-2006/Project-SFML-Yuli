@@ -21,6 +21,7 @@ public:
 
 	virtual void initGem(int t); // initialize gem
 	virtual int getPointsValue() const { return 10; }  
+	virtual bool isBombGem() const { return false; }
 	virtual int getType();
 	void setType(int t);
 	Sprite& getSprite();

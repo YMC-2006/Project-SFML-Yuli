@@ -36,3 +36,7 @@ BombGem::BombGem(int type) {
 BombGem::~BombGem() {
 
 }
+
+bool BombGem::isBombGem() {
+    return true;
+}

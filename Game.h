@@ -18,7 +18,7 @@ public:
 	void runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted);
 	
 
-	void updateUnlockedLevels(vector<LevelConfig>& levels, int completedLevel);
+	void updateUnlockedLevels(int completedLevel);
 	void setLevels(int index, bool complete);
 
 };

@@ -769,7 +769,7 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted)
 
 }
 
-void Game::updateUnlockedLevels(vector<LevelConfig>& levels, int completedLevel) {
+void Game::updateUnlockedLevels(int completedLevel) {
 
     if (completedLevel < 1 || completedLevel >= levels.size()) return;
 

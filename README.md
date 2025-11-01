@@ -33,6 +33,8 @@ Si tienes alguna pregunta, puedes contactar a Yuliana Mora Cedeño a través del
 
 ## CHANGELOG.md
 ```
+![CHANGELOG](https://img.shields.io/badge/Changelog-View-lightblue)(CHANGELOG.md)
+
 Ver historial de cambios (CHANGELOG)
 (CHANGELOG.md)
 ```

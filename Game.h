@@ -11,7 +11,12 @@ private:
 
 public:
 
+
+
 	Game();
+	void userLogin();
+	void drawLoginForm();
+	void drawRegisterForm();
 	void runGame();
 	void runLevelsWindow();
 	void runSecondWindow(const LevelConfig& config);

@@ -12,13 +12,204 @@ Game::Game() {
 
     levels = {
     //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl, swap booster
-    { 1, 12, 1000, 1, 0, false, false, true, false}, // Purple Gem
-    { 2, 12, 2000, 1, 1, false, true, true, false},  // Yellow Gem
-    { 3, 12, 3000, 2, 2, true, true, true, false},   // Green Gem
-    { 4, 12, 4000, 3, 3, false, true, false, false}, // Blue Gem
-    { 5, 12, 5000, 1, 4, false, true, false, true } // Red Gem
+    { 1, 1, 1000, 1, 0, false, false, true, false}, // Purple Gem
+    { 2, 1, 2000, 1, 1, false, true, false, false},  // Yellow Gem
+    { 3, 1, 3000, 2, 2, true, true, false, false},   // Green Gem
+    { 4, 1, 4000, 3, 3, false, true, false, false}, // Blue Gem
+    { 5, 1, 5000, 1, 4, false, true, false, true } // Red Gem
 
     };
+
+}
+
+void Game::drawLoginForm() {
+
+    Texture tLogin; tLogin.loadFromFile("assets/loginData.png");
+    Sprite background(tLogin);
+
+    Texture tLog;tLog.loadFromFile("assets/login.png");
+    Sprite loginButton(tLog);
+    loginButton.setPosition(400, 470);
+    loginButton.setScale(.15f, .15f);
+    loginButton.setOrigin(tLog.getSize().x / 2.f, tLog.getSize().y / 2.f);
+
+    sf::FloatRect bounds = loginButton.getGlobalBounds();
+    sf::RectangleShape debugRect(sf::Vector2f(bounds.width, bounds.height));
+    debugRect.setPosition(bounds.left, bounds.top);
+    debugRect.setFillColor(sf::Color::Transparent);
+    debugRect.setOutlineThickness(2);
+    debugRect.setOutlineColor(sf::Color::Red);
+
+    RenderWindow loginForm(VideoMode(800, 600), "Login");
+    while (loginForm.isOpen()) {
+        Event e;
+        while (loginForm.pollEvent(e)) {
+            if (e.type == Event::Closed) loginForm.close();
+            Vector2i mousePos = Mouse::getPosition(loginForm);
+            Vector2f mPosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+
+
+            if (loginButton.getGlobalBounds().contains(mPosF)) {
+                loginButton.setScale(.16f, .16f);
+
+                if (e.type == Event::MouseButtonPressed) {
+                    cout << "Checking if the acount exists..."<<endl;
+                    cout << "Exist -> welcome ifNOT -> ERROR" << endl;
+                }
+
+            }
+            else {
+                loginButton.setScale(.15f, .15f);
+
+            }
+
+
+        }
+
+
+        loginForm.clear();
+        loginForm.draw(background);
+        loginForm.draw(loginButton);
+        loginForm.display();
+        
+    }
+
+
+}
+void Game::drawRegisterForm() {
+ 
+    Texture treg; treg.loadFromFile("assets/registerData.png");
+    Sprite background(treg);
+
+    Texture tReg; tReg.loadFromFile("assets/register.png");
+    Sprite registerButton(tReg);
+    registerButton.setPosition(400, 480);
+    registerButton.setScale(.14f, .14f);
+    registerButton.setOrigin(tReg.getSize().x / 2.f, tReg.getSize().y);
+
+  
+
+    RenderWindow registerForm(VideoMode(800, 600), "Register");
+    while (registerForm.isOpen()) {
+        Event event;
+        while (registerForm.pollEvent(event)) {
+            if (event.type == Event::Closed) registerForm.close();
+
+            Vector2i mousePos = Mouse::getPosition(registerForm);
+            Vector2f mPosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+
+
+            if (registerButton.getGlobalBounds().contains(mPosF)) {
+                registerButton.setScale(.15f, .15f);
+
+                if (event.type == Event::MouseButtonPressed) {
+                    cout << "IF account exist tell them to log in instead...." << endl;
+                    cout << "IF NOT create the account!" << endl;
+                }
+
+            }
+            else {
+                registerButton.setScale(.14f, .14f);
+
+            }
+
+
+            registerForm.clear();
+            registerForm.draw(background);
+            registerForm.draw(registerButton);
+            registerForm.display();
+        }
+
+       
+    }
+}
+
+void Game::userLogin() {
+
+    cout << "Match-3 Login"<<endl;
+
+    Texture tLogin; tLogin.loadFromFile("assets/loginBg.png");
+    Sprite background(tLogin);
+
+    Texture tlogin; tlogin.loadFromFile("assets/login.png");
+    Sprite loginButton(tlogin);
+    loginButton.setPosition(245, 330);
+    loginButton.setScale(0.15f, 0.15f);
+    loginButton.setOrigin(tlogin.getSize().x / 2.f, tlogin.getSize().y / 2.f);
+
+    Texture treg; treg.loadFromFile("assets/register.png");
+    Sprite registerButton(treg);
+    registerButton.setPosition(535, 370);
+    registerButton.setScale(.14f, .14f);
+    registerButton.setOrigin(treg.getSize().x / 2.f, treg.getSize().y);
+
+    Texture t1cat; t1cat.loadFromFile("assets/catFrame1.png");
+    Sprite catFrame1(t1cat);
+    catFrame1.setPosition(500, 200);
+    catFrame1.setScale(.20f, .20f);
+
+    Texture t2cat; t2cat.loadFromFile("assets/catFrame2.png");
+    Sprite catFrame2(t2cat);
+    catFrame2.setPosition(500, 200);
+    catFrame2.setScale(.20f, .20f);
+
+    Sprite* currentCatFrame = &catFrame1;
+
+    RenderWindow loginWindow(VideoMode(800, 600), "Login");
+
+    while (loginWindow.isOpen()) {
+        Event event;
+        while (loginWindow.pollEvent(event)) {
+
+            if (event.type == Event::Closed) loginWindow.close();
+            if (Keyboard::isKeyPressed(Keyboard::Escape)) loginWindow.close();
+            Vector2i mousePos = Mouse::getPosition(loginWindow);
+            Vector2f mPosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+
+
+            // Hover
+            if (loginButton.getGlobalBounds().contains(mPosF)) {
+                loginButton.setScale(0.16f, 0.16f);
+
+                if (event.type == Event::MouseButtonPressed) {
+                    loginWindow.close();
+                    drawLoginForm();
+                    cout << "Logiiiiiin" << endl;
+
+                }
+            }
+            else {
+                loginButton.setScale(0.15f, 0.15f); // back to normal size
+            }
+
+            if (registerButton.getGlobalBounds().contains(mPosF)) {
+                registerButton.setScale(0.15f, 0.15f);
+                currentCatFrame = &catFrame2;
+                if (event.type == Event::MouseButtonPressed) {
+                    loginWindow.close();
+                    drawRegisterForm();
+                    cout << "Registaaaa"<<endl;
+                }
+            }
+            else {
+                registerButton.setScale(0.14f, 0.14f);//normal size
+                currentCatFrame = &catFrame1;
+
+            }
+
+
+
+
+            loginWindow.clear();
+            loginWindow.draw(background);
+            loginWindow.draw(loginButton);
+            loginWindow.draw(registerButton);
+            loginWindow.draw(*currentCatFrame);
+            loginWindow.display();
+
+        }
+    }
+
 
 }
 
@@ -35,6 +226,20 @@ void Game::runGame() {
     Texture backgroundIMG;
     backgroundIMG.loadFromFile("assets/backgroundIMG.png");
     Sprite spriteBackground(backgroundIMG);
+
+    //----------------------------------------------------
+
+    Texture t1cat; t1cat.loadFromFile("assets/catFrame1.png");
+    Sprite catFrame1(t1cat);
+    catFrame1.setPosition(340, 470);
+    catFrame1.setScale(.20f, .20f);
+
+    Texture t2cat; t2cat.loadFromFile("assets/catFrame2.png");
+    Sprite catFrame2(t2cat);
+    catFrame2.setPosition(340, 470);
+    catFrame2.setScale(.20f, .20f);
+
+    Sprite* currentCatFrame = &catFrame1;
 
     //-------------------------MUSIKKKK
     Texture musicButton, noMusicButton;
@@ -161,7 +366,8 @@ void Game::runGame() {
             if (spritePlay.getGlobalBounds().contains(mousePosF)) {
                 
                 spritePlay.setScale(0.31f, 0.31f);
-
+                currentCatFrame = &catFrame2;
+                
                 if (event.type == Event::MouseButtonPressed) {
                     clickSound.play();
                     windowMain.close();
@@ -174,7 +380,7 @@ void Game::runGame() {
             }
             else {
                 spritePlay.setScale(0.30f, 0.30f);
-                
+                currentCatFrame = &catFrame1;
             }
 
             //Menu test
@@ -447,6 +653,8 @@ void Game::runGame() {
         windowMain.draw(spritePlay);
         windowMain.draw(spriteMenu);
 
+        windowMain.draw(*currentCatFrame);
+
         //Music sprite depends on the bool musicON
         if (musicON) {
             windowMain.draw(spriteMusic);
@@ -681,37 +889,41 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted)
     Font font;
     font.loadFromFile("arial.ttf");
     Text text; text.setFont(font); 
-    text.setCharacterSize(30); text.setPosition(200.f, 260.f);
+    text.setCharacterSize(30); text.setPosition(370.f, 430.f);
     text.setString("Total Points: " + to_string(finalScore));
 
-    Texture background;
-    background.loadFromFile("assets/returnBackground.png");
-    Sprite spriteBackground(background);
+    Texture tWon;
+    tWon.loadFromFile("assets/gameOverWon.png");
+    Sprite backgroundWon(tWon);
+
+    Texture tLost;
+    tLost.loadFromFile("assets/gameOverLost.png");
+    Sprite backgroundLost(tLost);
 
 
     //BUTTONS
     Texture playTexture;
     playTexture.loadFromFile("assets/playAgain.png");
-    Sprite playAgain(playTexture); playAgain.setPosition(300.f, 130.f); playAgain.setScale(.40f, .40f);
+    Sprite playAgain(playTexture); playAgain.setPosition(470.f, 290.f); playAgain.setScale(.40f, .40f);
 
     Texture exitTexture;
     exitTexture.loadFromFile("assets/exitAll.png");
-    Sprite exitSprite(exitTexture); exitSprite.setPosition(70.f, 125.f); exitSprite.setScale(.40f, .40f);
+    Sprite exitSprite(exitTexture); exitSprite.setPosition(170.f, 290.f); exitSprite.setScale(.40f, .40f);
 
     Texture homeTexture;
     homeTexture.loadFromFile("assets/backHome.png");
-    Sprite homeSprite(homeTexture); homeSprite.setPosition(80.f, 240.f); homeSprite.setScale(.25f, .25f);
+    Sprite homeSprite(homeTexture); homeSprite.setPosition(250.f, 410.f); homeSprite.setScale(.25f, .25f);
 
 
 
 
-    RenderWindow returnWindow(VideoMode(600, 400), "PLAY AGAIN!!");
+    RenderWindow returnWindow(VideoMode(800, 600), "PLAY AGAIN!!");
     if (gemTaskAmount == 0) cout << "You won";
     else cout << "you lost";
 
     if (gemTaskAmount <= 0) {
         cout << "Level " << levelCompleted << " completed!! ";
-        updateUnlockedLevels(levels, levelCompleted);
+        updateUnlockedLevels(levelCompleted);
     }
 
     returnWindow.setMouseCursorVisible(false);
@@ -752,7 +964,8 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted)
 
 
             returnWindow.clear();
-            returnWindow.draw(spriteBackground); 
+            if(gemTaskAmount==0)returnWindow.draw(backgroundWon);
+            else returnWindow.draw(backgroundLost);
             returnWindow.draw(text);
             returnWindow.draw(playAgain);
             returnWindow.draw(exitSprite);

@@ -204,19 +204,12 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     if (m1 && m2) {
                                         cout << "\n\nDouble match [" << x1 << "][" << y1 << "]\n";
                                         cout << "Double match [" << x2 << "][" << y2 << "]\n";
-
-
-                                      
-
-
                                     }
                                     else if (m1) {
                                         cout << "Match on x1,y1  [" << x1 << "][" << y1 << "]\n";
                                         type1 = matrix[x1][y1]->getType();
                                         cout << "Gem type: " << type1 << endl;
                                        
-                                       
-
                                     }
 
                                     else if (m2) {
@@ -238,34 +231,7 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                     totalGemTaskMatched += countGemTaskMatches();
                                     floatingTexts(window, (gemsMatchedPoints / 10));
                                    
-                                    
-                                    // Generate bomb gem!!! 
-                                    if ((gemsMatchedPoints / 10) >= 4 && enableBombGems) {
-                                        const float offsetX = 250.f;
-                                        const float offsetY = 200.f;
-                                        const float tileSize = 70.f;
-
-                                        if (m1 && m2) {
-                                            cout << "Double matches dont generate bomb gems =D" << endl;
-
-
-                                        }
-                                        else if (m1) {
-                                            matrix[x1][y1] = new BombGem(type1);
-                                            matrix[x1][y1]->getSprite().setPosition(offsetX + tileSize * x1,
-                                                offsetY + tileSize * y1);
-
-
-                                        }
-                                        else if (m2) {
-                                            matrix[x2][y2] = new BombGem(type2);
-                                            matrix[x2][y2]->getSprite().setPosition(offsetX + tileSize * x2,
-                                                offsetY + tileSize * y2);
-
-                                        }
-
-                                    }
-                                    
+                          
                                    
 
                                     // Cascade Loop
@@ -297,7 +263,32 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         updateGemTaskProgress(totalGemTaskMatched);
                                     }
 
-                                  
+                                    // Generate bomb gem!!! 
+                                    if ((gemsMatchedPoints / 10) >= 4 && enableBombGems) {
+                                        const float offsetX = 250.f;
+                                        const float offsetY = 200.f;
+                                        const float tileSize = 70.f;
+
+                                        if (m1 && m2) {
+                                            cout << "Double matches dont generate bomb gems =D" << endl;
+
+
+                                        }
+                                        else if (m1) {
+                                            matrix[x1][y1] = new BombGem(type1);
+                                            matrix[x1][y1]->getSprite().setPosition(offsetX + tileSize * x1,
+                                                offsetY + tileSize * y1);
+
+
+                                        }
+                                        else if (m2) {
+                                            matrix[x2][y2] = new BombGem(type2);
+                                            matrix[x2][y2]->getSprite().setPosition(offsetX + tileSize * x2,
+                                                offsetY + tileSize * y2);
+
+                                        }
+
+                                    }
                                     
                                    
 
@@ -547,9 +538,7 @@ bool Board::deleteMatch(RenderWindow& window) {
     return found;
 }
 
-bool Board::deleteRowOrColumns(RenderWindow& window) {
 
-}
 
 void Board::pullGravity() {
 

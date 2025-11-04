@@ -23,7 +23,7 @@ public:
         box.setPosition(x, y);
         box.setSize({ width, height });
         box.setFillColor(Color(255, 255, 255, 255));
-        box.setOutlineColor(Color::Black);
+        box.setOutlineColor(Color::Cyan);
         box.setOutlineThickness(2);
 
         text.setFont(font);
@@ -36,7 +36,7 @@ public:
         if (event.type == Event::MouseButtonPressed) {
             Vector2f mousePos = (Vector2f)Mouse::getPosition(window);
             isSelected = box.getGlobalBounds().contains(mousePos);
-            box.setOutlineColor(isSelected ? Color::Cyan : Color::Black);
+            box.setOutlineColor(isSelected ? Color::Blue : Color::Cyan);
         }
 
         if (isSelected && event.type == Event::TextEntered) {

@@ -501,47 +501,19 @@ void Game::runGame() {
                 Texture cursor;
                 cursor.loadFromFile("assets/cursor.png");
                 Sprite spriteCursor(cursor);
-
                 spriteMenu.setScale(0.31f, 0.31f);
 
-                Texture yellowGem;
-                yellowGem.loadFromFile("assets/yellowGem.png");
-                Sprite spriteYellowGem(yellowGem);
-                spriteYellowGem.setPosition(200, 100);
+                Texture tLB; tLB.loadFromFile("assets/leaderboardBG.png");
+                Sprite leaderBoard(tLB);
 
-                Texture purpleGem;
-                purpleGem.loadFromFile("assets/purpleGem.png");
-                Sprite spritePurpleGem(purpleGem);
-                spritePurpleGem.setPosition(300, 100);
-
-
-                //Movement variables
-                Vector2f purpleTarget = spritePurpleGem.getPosition();
-                Vector2f yellowTarget = spriteYellowGem.getPosition();
-                bool purpleMoving = false, yellowMoving = false;
-                float velocity = 300.f;
-                Sprite* selected = nullptr; // pointer to the selected sprite
-                Clock clock;
-
+                
                 if (event.type == Event::MouseButtonPressed) {
                     clickSound.play();
-                    RenderWindow windowTest(VideoMode(800,600),"Test");
+                    RenderWindow windowTest(VideoMode(1000,800),"Leader Board");
                     windowTest.setMouseCursorVisible(false);
 
-                    RectangleShape outline(Vector2f(300, 30));
-                    outline.setFillColor(Color::Transparent); outline.setOutlineColor(Color::White); outline.setOutlineThickness(2);
-                    outline.setPosition(250, 250);
                    
-
-                    RectangleShape fill(Vector2f(0, 30)); fill.setFillColor(Color::Green); fill.setPosition(250, 250);
-                    // Progress variables
-                    int maxPresses = 15;
-                    int presses = 0;
-                    float maxWidth = 300.f; // full width of bar
-                    Texture tRedGem; tRedGem.loadFromFile("assets/redGem.png");
-                    Sprite redGem(tRedGem); redGem.setPosition(300, 300);
                     while (windowTest.isOpen()) {
-                         float dt = clock.restart().asSeconds();
                         while (windowTest.pollEvent(event)) {
                             if (event.type == Event::Closed) windowTest.close();
                             if (Keyboard::isKeyPressed(Keyboard::Escape)) windowTest.close();
@@ -549,106 +521,23 @@ void Game::runGame() {
                             if (event.type == Event::MouseButtonPressed) {
                                 Vector2i mousePos = Mouse::getPosition(windowMain);
                                 Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-                                if (redGem.getGlobalBounds().contains(mousePosF)) {
-                                    if (presses < maxPresses) {
-                                        presses++;
-                                        float progress = (float)presses / maxPresses;
-                                        fill.setSize(Vector2f(maxWidth * progress, 30));
-                                    }
-                                   
-                                    if (presses == 3) {
-                                        fill.setFillColor(Color::Yellow);
-                                    }
-                                    if (presses == 6) {
-                                        fill.setFillColor(Color::Red);
-                                    } if (presses == 9) {
-                                        fill.setFillColor(Color::Magenta);
-                                    }
-                                    if (presses == 15) {
-                                        fill.setFillColor(Color::Yellow);
-                                      
-                                    }
-                                    if (presses == maxPresses) {
-                                        presses = -15;
-                                        maxPresses = 0;
-                                        float progress = (float)presses / maxPresses;
-                                        fill.setSize(Vector2f(maxWidth * progress, 30));
-                                    }
-                                }
-                               
+                                
                             }
-                            if (event.type == Event::MouseButtonPressed) {
-                                Vector2i mousePos = Mouse::getPosition(windowMain);
-                                Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-
-                                if (spriteYellowGem.getGlobalBounds().contains(mousePosF)) {
-                                    if (!selected) {
-                                        selected = &spritePurpleGem;
-                                    }
-                                    else {
-                                        purpleTarget = selected->getPosition();
-                                        if (selected == &spriteYellowGem) {
-                                            yellowTarget = spritePurpleGem.getPosition();
-                                            purpleMoving = true;
-                                        }
-                                        yellowMoving = true;
-                                        selected = nullptr;
-                                    }
-
-                                    cout << "Clicked YELOOOW";
-                                }
-                                else if(spritePurpleGem.getGlobalBounds().contains(mousePosF)){
-                                    if (!selected) {
-                                        selected = &spriteYellowGem;
-                                    }
-                                    else {
-                                        yellowTarget = selected->getPosition();
-                                        if (selected == &spritePurpleGem) {
-                                            purpleTarget = spriteYellowGem.getPosition();
-                                            yellowMoving = true;
-                                        }
-                                        purpleMoving = true;
-                                        selected = nullptr;
-                                    }
-                                }
-                            }
+                          
                          
 
                           
                         }
                       
 
-                        //update the movement frame by frame
-                        auto moveTowards = [&](Sprite& sprite, Vector2f& target, bool& moving) {
-                            if (!moving) return;
-                            Vector2f pos = sprite.getPosition();
-                            Vector2f dir = target - pos;
-                            float dist = sqrt(dir.x * dir.x + dir.y * dir.y);
+                        
 
-                            if (dist < 1.f) {
-                                sprite.setPosition(target);
-                                moving = false;
-                            }
-                            else {
-                                dir /= dist;
-                                sprite.move(dir * velocity * dt);
-                            }
-                            };
-
-                        moveTowards(spritePurpleGem, purpleTarget, purpleMoving);
-                        moveTowards(spriteYellowGem, yellowTarget, yellowMoving);
-
-                        windowTest.clear(Color::Blue);
-                        windowTest.draw(spriteYellowGem);
-                        windowTest.draw(spritePurpleGem);
-
-
+                        windowTest.clear();
                         Vector2i mousePosCursor = Mouse::getPosition(windowTest);
                         spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
-                      
-                        windowTest.draw(redGem);
-                        windowTest.draw(outline); windowTest.draw(fill);
+                        windowTest.draw(leaderBoard);
                         windowTest.draw(spriteCursor);
+                       
                         windowTest.display();
                        
                     }

@@ -1,8 +1,9 @@
-#include <iostream>
+﻿#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 #include "Board.h"
 #include <SFML/Audio.hpp>
+#include "TextBox.cpp"
 #include <ctime>
 using namespace std;
 using namespace sf;
@@ -23,44 +24,102 @@ Game::Game() {
 }
 
 void Game::drawLoginForm() {
+    //Left Right
+    TextBox usernameBox(290, 250, 300, 40);
+    TextBox passwordBox(290, 310, 300, 40, true);
+
+    Font font;
+    font.loadFromFile("arial.ttf");
+
+    Text usernameLabel("Username: ", font, 24);
+    usernameLabel.setPosition(160,250);
+    Text passwordLabel("Password: ", font, 24);
+    passwordLabel.setPosition(160,315);
+
+    Text ErrorText("Error!! You must enter both password and username", font, 22);
+    ErrorText.setPosition(200, 370);
+    ErrorText.setFillColor(Color::Red);
+    bool errorInput = false;
+    Clock errorClock;
+
 
     Texture tLogin; tLogin.loadFromFile("assets/loginData.png");
     Sprite background(tLogin);
 
     Texture tLog;tLog.loadFromFile("assets/login.png");
     Sprite loginButton(tLog);
-    loginButton.setPosition(400, 470);
+    loginButton.setPosition(440, 460);
     loginButton.setScale(.15f, .15f);
     loginButton.setOrigin(tLog.getSize().x / 2.f, tLog.getSize().y / 2.f);
 
-    sf::FloatRect bounds = loginButton.getGlobalBounds();
-    sf::RectangleShape debugRect(sf::Vector2f(bounds.width, bounds.height));
-    debugRect.setPosition(bounds.left, bounds.top);
-    debugRect.setFillColor(sf::Color::Transparent);
-    debugRect.setOutlineThickness(2);
-    debugRect.setOutlineColor(sf::Color::Red);
 
-    RenderWindow loginForm(VideoMode(800, 600), "Login");
+    RenderWindow loginForm(VideoMode(800, 600), "Login Form");
     while (loginForm.isOpen()) {
         Event e;
         while (loginForm.pollEvent(e)) {
-            if (e.type == Event::Closed) loginForm.close();
+            if (e.type == Event::Closed) exit(0);
             Vector2i mousePos = Mouse::getPosition(loginForm);
             Vector2f mPosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
+            usernameBox.handleEvent(e, loginForm);
+            passwordBox.handleEvent(e, loginForm);
 
+
+            //Enter
+            if (e.type == Event::KeyPressed && e.key.code == Keyboard::Enter) {
+
+                string username = usernameBox.getText();
+                string password = passwordBox.getText();
+
+                if (username == "" || password == "") {
+                    cout << "HMMM" << endl;
+                    errorInput = true;
+                    errorClock.restart();
+                }
+                else {
+
+
+                    
+                    cout << "Username: " << username << "\n";
+                    cout << "Password: " << password << "\n";
+                    // ⚡ Later we’ll verify user or save to JSON here
+                    loginForm.close();
+                }
+
+               
+                
+            }
+            //Login button manually
             if (loginButton.getGlobalBounds().contains(mPosF)) {
                 loginButton.setScale(.16f, .16f);
 
                 if (e.type == Event::MouseButtonPressed) {
                     cout << "Checking if the acount exists..."<<endl;
                     cout << "Exist -> welcome ifNOT -> ERROR" << endl;
+
+                    string username = usernameBox.getText();
+                    string password = passwordBox.getText();
+
+                    if (username == "" || password == "") {
+                        cout << "HMMM" << endl;
+                        errorInput = true;
+                        errorClock.restart();  
+                    }
+                    else {
+                        errorInput = false;
+                        cout << "Username: " << username << "\n";
+                        cout << "Password: " << password << "\n";
+                        // ⚡ Later we’ll verify user or save to JSON here
+                        loginForm.close();
+                    }
+
+                   
+                   
                 }
 
             }
             else {
                 loginButton.setScale(.15f, .15f);
-
             }
 
 
@@ -70,6 +129,13 @@ void Game::drawLoginForm() {
         loginForm.clear();
         loginForm.draw(background);
         loginForm.draw(loginButton);
+        loginForm.draw(usernameLabel);
+        loginForm.draw(passwordLabel);
+        usernameBox.draw(loginForm);
+        passwordBox.draw(loginForm);
+        if (errorInput && errorClock.getElapsedTime().asSeconds() < 2.f) {
+        loginForm.draw(ErrorText);
+        }
         loginForm.display();
         
     }
@@ -77,7 +143,25 @@ void Game::drawLoginForm() {
 
 }
 void Game::drawRegisterForm() {
- 
+
+    TextBox usernameBox(290, 220, 300, 40);
+    TextBox passwordBox(290, 280, 300, 40, true);
+
+    Font font;
+    font.loadFromFile("arial.ttf");
+
+    Text usernameLabel("Username: ", font, 24);
+    usernameLabel.setPosition(160, 220);
+    Text passwordLabel("Password: ", font, 24);
+    passwordLabel.setPosition(160, 285);
+
+    Text ErrorText("Error!! You must enter both password and username", font, 22);
+    ErrorText.setPosition(200, 370);
+    ErrorText.setFillColor(Color::Red);
+    bool errorInput = false;
+    Clock errorClock;
+
+    //------------------------------------------------------------ 
     Texture treg; treg.loadFromFile("assets/registerData.png");
     Sprite background(treg);
 
@@ -89,7 +173,7 @@ void Game::drawRegisterForm() {
 
   
 
-    RenderWindow registerForm(VideoMode(800, 600), "Register");
+    RenderWindow registerForm(VideoMode(800, 600), "Register Form");
     while (registerForm.isOpen()) {
         Event event;
         while (registerForm.pollEvent(event)) {
@@ -98,6 +182,8 @@ void Game::drawRegisterForm() {
             Vector2i mousePos = Mouse::getPosition(registerForm);
             Vector2f mPosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
+            usernameBox.handleEvent(event, registerForm);
+            passwordBox.handleEvent(event, registerForm);
 
             if (registerButton.getGlobalBounds().contains(mPosF)) {
                 registerButton.setScale(.15f, .15f);
@@ -105,6 +191,25 @@ void Game::drawRegisterForm() {
                 if (event.type == Event::MouseButtonPressed) {
                     cout << "IF account exist tell them to log in instead...." << endl;
                     cout << "IF NOT create the account!" << endl;
+
+                    string username = usernameBox.getText();
+                    string password = passwordBox.getText();
+
+
+                    if (username == "" || password == "") {
+                        errorInput = true;
+                        errorClock.restart();
+                        cout << "Error!" << endl;
+                    }
+                    else {
+                        cout << "Username: " << username << "\n";
+                        cout << "Password: " << password << "\n";
+
+                        // ⚡ Later we’ll verify user or save to JSON here
+                        registerForm.close();
+                    }
+
+                   
                 }
 
             }
@@ -117,6 +222,13 @@ void Game::drawRegisterForm() {
             registerForm.clear();
             registerForm.draw(background);
             registerForm.draw(registerButton);
+            registerForm.draw(usernameLabel);
+            registerForm.draw(passwordLabel);
+            usernameBox.draw(registerForm);
+            passwordBox.draw(registerForm);
+            if (errorInput && errorClock.getElapsedTime().asSeconds() < 2.f) {
+                registerForm.draw(ErrorText);
+            }
             registerForm.display();
         }
 

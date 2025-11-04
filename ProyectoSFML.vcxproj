@@ -143,6 +143,7 @@
     <ClCompile Include="IceGem.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NormalGem.cpp" />
+    <ClCompile Include="TextBox.cpp" />
     <ClCompile Include="User.cpp" />
   </ItemGroup>
   <ItemGroup>

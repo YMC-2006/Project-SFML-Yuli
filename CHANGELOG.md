@@ -19,6 +19,9 @@ Cada versión corresponde a una etapa del proyecto evaluada durante el curso.
 - Se estructuró el proyecto en archivos `.h` y `.cpp` separados para cada clase.
 - El juego es funcional, pero aún **no incluye animaciones**.
 
+#Commits mas relevantes de esta version
+-
+
 ---
 
 ## [v2.0] — Segunda Entrega  
@@ -38,6 +41,13 @@ Cada versión corresponde a una etapa del proyecto evaluada durante el curso.
 - Nueva estructura `LevelConfig.h` encargada de definir los atributos de cada nivel.
 - El proyecto ahora contiene 5 clases principales:
   - `Game`, `Board`, `Gem`, `BombGem`, `IceGem`
+    
+### Commits mas relevantes de esta version
+- Fixed the bar progress bug, change the bg image of the game, added the task
+- Animation for the swap, it has some errors, but the animation works pretty well, it looks smooth and the function is really simple, animatedSwap kinda working.
+- Add a LevelConfig.h with a struct to manage the levels of the game, created the 5 different levels in a very general way, they work pretty fine but there is still a lot to do to them
+
+
 
 ---
 
@@ -54,5 +64,10 @@ Cada versión corresponde a una etapa del proyecto evaluada durante el curso.
   - Manejo de usuario con creación y registro.
 - Corrección de errores en el comportamiento y visualización de la barra de progreso.
 - Las **gemas bomba** ahora se generan dinámicamente cuando se hace un match de más de 4 gemas consecutivas (¡nuevo comportamiento inteligente!).
+
+  ### Commits mas relevantes de esta version
+- Added persistance
+- Fixed many bugs from the last version (generating bomb gems, fixed the progress of the bar, gravity errors, etc...)
+- Add the README.md file
 
 ---

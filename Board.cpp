@@ -289,20 +289,18 @@ void Board::swapGems(RenderWindow& window, Event& event) {
                                         }
 
                                     }
-                                    
-                                   
-
-                                        
-                                    
-                                   
-
+                                  
                                     if (totalMoves <= 0) {
                                         window.close();
                                         if (gemTaskAmount <= 0 && currentUser) {
                                             currentUser->addOrUpdateLevel(levelNumber, pointsCounter);
                                             userManager->saveToFile();
-
+                                            cout << "Not saving the level data correctly --"<<endl;
                                         }
+                                        else if (currentUser) {
+                                            cout << "Current user is nullptr" << endl;
+                                        }
+                                       
                                         game.runThirdWindow(pointsCounter, gemTaskAmount, levelNumber);
                                        
                                     }

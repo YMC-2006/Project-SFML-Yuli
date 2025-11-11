@@ -53,6 +53,13 @@ void Game::drawLoginForm() {
     loginButton.setOrigin(tLog.getSize().x / 2.f, tLog.getSize().y / 2.f);
 
 
+    Texture back;
+    back.loadFromFile("assets/return.png");
+    Sprite spriteReturn(back);
+    spriteReturn.setScale(.70f, .70f);
+    spriteReturn.setPosition(100.f, 60.f);
+    spriteReturn.setOrigin(back.getSize().x / 2.f, back.getSize().y / 2.f);
+
     RenderWindow loginForm(VideoMode(800, 600), "Login Form");
     while (loginForm.isOpen()) {
         Event e;
@@ -64,6 +71,21 @@ void Game::drawLoginForm() {
             usernameBox.handleEvent(e, loginForm);
             passwordBox.handleEvent(e, loginForm);
 
+            if (spriteReturn.getGlobalBounds().contains(mPosF)) {
+                spriteReturn.setScale(.80f, .80f);
+                if (e.type == Event::MouseButtonPressed) {
+                    if (spriteReturn.getGlobalBounds().contains(mPosF)) {
+
+                        cout << "Back to the login";
+
+                        loginForm.close();
+                        userLogin();
+                    }
+                }
+            }
+            else {
+                spriteReturn.setScale(.70f, .70f);
+            }
 
             //Login button manually
             if (loginButton.getGlobalBounds().contains(mPosF)) {
@@ -77,6 +99,9 @@ void Game::drawLoginForm() {
                     string password = passwordBox.getText();
 
                     User* found = userManager.findUser(username, password);
+
+                  
+
 
                     if (username.empty() || password.empty()) {
                         cout << "HMMM" << endl;
@@ -118,6 +143,7 @@ void Game::drawLoginForm() {
 
         loginForm.clear();
         loginForm.draw(background);
+        loginForm.draw(spriteReturn);
         loginForm.draw(loginButton);
         loginForm.draw(usernameLabel);
         loginForm.draw(passwordLabel);
@@ -161,7 +187,12 @@ void Game::drawRegisterForm() {
     registerButton.setScale(.14f, .14f);
     registerButton.setOrigin(tReg.getSize().x / 2.f, tReg.getSize().y);
 
-  
+    Texture back;
+    back.loadFromFile("assets/return.png");
+    Sprite spriteReturn(back);
+    spriteReturn.setScale(.70f, .70f);
+    spriteReturn.setPosition(100.f, 60.f);
+    spriteReturn.setOrigin(back.getSize().x / 2.f, back.getSize().y / 2.f);
 
     RenderWindow registerForm(VideoMode(800, 600), "Register Form");
     while (registerForm.isOpen()) {
@@ -174,6 +205,22 @@ void Game::drawRegisterForm() {
 
             usernameBox.handleEvent(event, registerForm);
             passwordBox.handleEvent(event, registerForm);
+
+            if (spriteReturn.getGlobalBounds().contains(mPosF)) {
+                spriteReturn.setScale(.80f, .80f);
+                if (event.type == Event::MouseButtonPressed) {
+                    if (spriteReturn.getGlobalBounds().contains(mPosF)) {
+                     
+                        cout << "Back to the login";
+                      
+                        registerForm.close();
+                        userLogin();
+                    }
+                }
+            }
+            else {
+                spriteReturn.setScale(.70f, .70f);
+            }
 
             if (registerButton.getGlobalBounds().contains(mPosF)) {
                 registerButton.setScale(.15f, .15f);
@@ -224,6 +271,7 @@ void Game::drawRegisterForm() {
 
             registerForm.clear();
             registerForm.draw(background);
+            registerForm.draw(spriteReturn);
             registerForm.draw(registerButton);
             registerForm.draw(usernameLabel);
             registerForm.draw(passwordLabel);

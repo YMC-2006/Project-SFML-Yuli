@@ -1,22 +1,7 @@
 [
     {
-        "Password": "alii",
-        "UnlockedLevels": [
-            {
-                "levelNumber": 1,
-                "score": 120
-            }
-        ],
-        "Username": "Yuls"
-    },
-    {
-        "Password": "yipi",
-        "UnlockedLevels": [
-            {
-                "levelNumber": 1,
-                "score": 30
-            }
-        ],
-        "Username": "Mels"
+        "Password": "wer",
+        "UnlockedLevels": [],
+        "Username": "wer"
     }
 ]

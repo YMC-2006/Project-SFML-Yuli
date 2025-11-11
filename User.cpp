@@ -13,10 +13,13 @@ void User::addOrUpdateLevel(int levelNumber, int score) {
 
 			return;
 		}
+		else {
+			cout << "Added new level " << levelNumber << " score " << score << "\n";
+			unlockedLevels.push_back({ levelNumber, score });
+
+		}
 	}
 
-	unlockedLevels.push_back({ levelNumber, score });
-	cout << "Added new level " << levelNumber << " score " << score << "\n";
 
 }
 

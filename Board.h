@@ -4,11 +4,18 @@
 #include <SFML/Audio.hpp>
 #include "Gem.h"
 #include "LevelConfig.h"
+#include "User.h"
+#include "UserManager.h"
 using namespace std;
 using namespace sf;
 
 class Board {
 private:
+
+	User* currentUser = nullptr;
+	UserManager* userManager = nullptr;
+
+
 	bool firstClick = false;
 	int x1, y1; // coords of the first click
 	static const int size = 8;
@@ -60,7 +67,7 @@ public:
 	bool checkMatchAt(int x, int y);
 	void animateSwap(Gem& g1, Gem& g2, Vector2f targetPos1, Vector2f targetPos2, RenderWindow& window);
 	bool deleteMatch(RenderWindow& window);
-	bool deleteRowOrColumns(RenderWindow& window);
+	
 	int countPoints();
 	
 	
@@ -83,5 +90,5 @@ public:
 	int getPoints(); int getMoves(); int getGemTask(); int getGemTaskAmount();
 	void setPoints(int p); void setMoves(int m); void setTask(int gems);
 
-	
+	void setUser(User* user, UserManager* manager);
 };

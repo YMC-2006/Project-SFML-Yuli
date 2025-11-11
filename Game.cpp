@@ -15,9 +15,9 @@ Game::Game() {
     //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl, swap booster
     { 1, 1, 1000, 1, 0, false, false, true, false}, // Purple Gem
     { 2, 1, 2000, 1, 1, false, true, false, false},  // Yellow Gem
-    { 3, 1, 3000, 2, 2, true, true, false, false},   // Green Gem
+    { 3, 1, 3000, 12, 2, true, true, false, false},   // Green Gem
     { 4, 1, 4000, 3, 3, false, true, false, false}, // Blue Gem
-    { 5, 1, 5000, 1, 4, false, true, false, true } // Red Gem
+    { 5, 12, 5000, 12, 4, false, true, false, true } // Red Gem
 
     };
 
@@ -36,8 +36,8 @@ void Game::drawLoginForm() {
     Text passwordLabel("Password: ", font, 24);
     passwordLabel.setPosition(160,315);
 
-    Text ErrorText("Error!! You must enter both password and username", font, 22);
-    ErrorText.setPosition(200, 370);
+    Text ErrorText("", font, 22);
+    ErrorText.setPosition(260, 380);
     ErrorText.setFillColor(Color::Red);
     bool errorInput = false;
     Clock errorClock;
@@ -65,30 +65,6 @@ void Game::drawLoginForm() {
             passwordBox.handleEvent(e, loginForm);
 
 
-            //Enter
-            if (e.type == Event::KeyPressed && e.key.code == Keyboard::Enter) {
-
-                string username = usernameBox.getText();
-                string password = passwordBox.getText();
-
-                if (username == "" || password == "") {
-                    cout << "HMMM" << endl;
-                    errorInput = true;
-                    errorClock.restart();
-                }
-                else {
-
-
-                    
-                    cout << "Username: " << username << "\n";
-                    cout << "Password: " << password << "\n";
-                    // ⚡ Later we’ll verify user or save to JSON here
-                    loginForm.close();
-                }
-
-               
-                
-            }
             //Login button manually
             if (loginButton.getGlobalBounds().contains(mPosF)) {
                 loginButton.setScale(.16f, .16f);
@@ -100,17 +76,31 @@ void Game::drawLoginForm() {
                     string username = usernameBox.getText();
                     string password = passwordBox.getText();
 
-                    if (username == "" || password == "") {
+                    User* found = userManager.findUser(username, password);
+
+                    if (username.empty() || password.empty()) {
                         cout << "HMMM" << endl;
+                        ErrorText.setString(" Please enter both username and password!");
                         errorInput = true;
-                        errorClock.restart();  
+                        errorClock.restart();
+                    }
+                    else if (found) {
+
+                        // user exists time to login
+                        currentUser = found;
+                        cout << "Welcome " << currentUser->getUsername() << "!\n";
+                       
+                        loginForm.close();
+                        runGame();
+                        errorInput = false;
+
                     }
                     else {
-                        errorInput = false;
-                        cout << "Username: " << username << "\n";
-                        cout << "Password: " << password << "\n";
-                        // ⚡ Later we’ll verify user or save to JSON here
-                        loginForm.close();
+
+                        ErrorText.setString("Account doesnt exist go to register!!!");                      
+                        errorInput = true;
+                        errorClock.restart();
+
                     }
 
                    
@@ -155,8 +145,8 @@ void Game::drawRegisterForm() {
     Text passwordLabel("Password: ", font, 24);
     passwordLabel.setPosition(160, 285);
 
-    Text ErrorText("Error!! You must enter both password and username", font, 22);
-    ErrorText.setPosition(200, 370);
+    Text ErrorText("", font, 22);
+    ErrorText.setPosition(260, 380);
     ErrorText.setFillColor(Color::Red);
     bool errorInput = false;
     Clock errorClock;
@@ -196,17 +186,30 @@ void Game::drawRegisterForm() {
                     string password = passwordBox.getText();
 
 
-                    if (username == "" || password == "") {
+                    if (username.empty() || password.empty()) {
+                        cout << "HMMM" << endl;
+                        ErrorText.setString(" Please enter both username and password!");
                         errorInput = true;
                         errorClock.restart();
-                        cout << "Error!" << endl;
+                    }
+                    else if (userManager.findUser(username, password)) {
+
+                        ErrorText.setString(" This user already exist, try loggin in instead");
+                        errorInput = true;
+                        errorClock.restart();
+
                     }
                     else {
-                        cout << "Username: " << username << "\n";
-                        cout << "Password: " << password << "\n";
 
-                        // ⚡ Later we’ll verify user or save to JSON here
+                        User newUser(username, password);
+                        userManager.addUser(newUser);
+                        currentUser = userManager.findUserByName(username);
+                        cout << "Welcome " << currentUser->getUsername() << "!\n";
+                        errorInput = false;
+                       
                         registerForm.close();
+                        runGame();
+
                     }
 
                    
@@ -238,7 +241,7 @@ void Game::drawRegisterForm() {
 
 void Game::userLogin() {
 
-    cout << "Match-3 Login"<<endl;
+    cout << "Match-3 Login" << endl;
 
     Texture tLogin; tLogin.loadFromFile("assets/loginBg.png");
     Sprite background(tLogin);
@@ -267,6 +270,26 @@ void Game::userLogin() {
 
     Sprite* currentCatFrame = &catFrame1;
 
+
+    //-------------------------MUSIKKKK
+    Texture musicTex, noMusicTex;
+    musicTex.loadFromFile("assets/music.png");
+    noMusicTex.loadFromFile("assets/noMusic.png");
+
+    Sprite spriteMusic(musicTex), spriteNoMusic(noMusicTex);
+    spriteMusic.setPosition(50, 60);
+    spriteMusic.setScale(0.125f, 0.125f);
+
+    spriteNoMusic.setPosition(50, 60);
+    spriteNoMusic.setScale(0.125f, 0.125f);
+
+    Music music;
+    music.openFromFile("assets/FrozenPines.wav");
+    music.setLoop(true);
+
+    bool musicON = false;
+    //-------------------------MUSIKKKK
+
     RenderWindow loginWindow(VideoMode(800, 600), "Login");
 
     while (loginWindow.isOpen()) {
@@ -274,7 +297,6 @@ void Game::userLogin() {
         while (loginWindow.pollEvent(event)) {
 
             if (event.type == Event::Closed) loginWindow.close();
-            if (Keyboard::isKeyPressed(Keyboard::Escape)) loginWindow.close();
             Vector2i mousePos = Mouse::getPosition(loginWindow);
             Vector2f mPosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
 
@@ -309,7 +331,25 @@ void Game::userLogin() {
 
             }
 
+            if (event.type == Event::MouseButtonPressed) {
+                if (musicON && spriteMusic.getGlobalBounds().contains(mPosF)) {
+                    if (music.getStatus() == Music::Playing) {
+                        music.stop();
+                    }
+                    else {
+                        music.play();
+                    }
+                    musicON = false;
+                }
+                else if (!musicON && spriteNoMusic.getGlobalBounds().contains(mPosF)) {
+                    cout << "NO MUSIKK ;D" << endl;
 
+                    musicON = true;
+                    music.play();
+                }
+
+            }
+            
 
 
             loginWindow.clear();
@@ -317,6 +357,12 @@ void Game::userLogin() {
             loginWindow.draw(loginButton);
             loginWindow.draw(registerButton);
             loginWindow.draw(*currentCatFrame);
+            if (musicON) {
+                loginWindow.draw(spriteMusic);
+            }
+            else {
+                loginWindow.draw(spriteNoMusic);
+            }
             loginWindow.display();
 
         }
@@ -370,12 +416,12 @@ void Game::runGame() {
     music.setLoop(true); 
     //-------------------------MUSIKKKK
 
-    Texture menu;
-    menu.loadFromFile("assets/menuButton.png");
-    Sprite spriteMenu(menu);
-    spriteMenu.setPosition(395, 255);
-    spriteMenu.setScale(0.30f, 0.30f);
-    spriteMenu.setOrigin(menu.getSize().x / 2.f, menu.getSize().y / 2.f);
+    Texture tRank;
+    tRank.loadFromFile("assets/rankingsButton.png");
+    Sprite rankingButton(tRank);
+    rankingButton.setPosition(395, 255);
+    rankingButton.setScale(0.10f, 0.10f);
+    rankingButton.setOrigin(tRank.getSize().x / 2.f, tRank.getSize().y / 2.f);
 
     Texture playButton;
     playButton.loadFromFile("assets/playButton.png");
@@ -496,16 +542,18 @@ void Game::runGame() {
             }
 
             //Menu test
-            if (spriteMenu.getGlobalBounds().contains(mousePosF)) {
+            if (rankingButton.getGlobalBounds().contains(mousePosF)) {
 
                 Texture cursor;
                 cursor.loadFromFile("assets/cursor.png");
                 Sprite spriteCursor(cursor);
-                spriteMenu.setScale(0.31f, 0.31f);
+                rankingButton.setScale(0.11f, 0.11f);
 
                 Texture tLB; tLB.loadFromFile("assets/leaderboardBG.png");
                 Sprite leaderBoard(tLB);
 
+                Texture tSet; tSet.loadFromFile("assets/settings.png");
+                Sprite settingButton(tSet); settingButton.setPosition(800,900);
                 
                 if (event.type == Event::MouseButtonPressed) {
                     clickSound.play();
@@ -537,7 +585,7 @@ void Game::runGame() {
                         spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
                         windowTest.draw(leaderBoard);
                         windowTest.draw(spriteCursor);
-                       
+                        windowTest.draw(settingButton);
                         windowTest.display();
                        
                     }
@@ -548,7 +596,7 @@ void Game::runGame() {
                     clickSound.stop();
                 }
             }else{
-                spriteMenu.setScale(0.30f, 0.30f);
+                rankingButton.setScale(0.10f, 0.10f);
             }
 
            
@@ -652,7 +700,7 @@ void Game::runGame() {
         //Buttons
         windowMain.draw(spriteCredits);
         windowMain.draw(spritePlay);
-        windowMain.draw(spriteMenu);
+        windowMain.draw(rankingButton);
 
         windowMain.draw(*currentCatFrame);
 
@@ -805,8 +853,16 @@ void Game::runSecondWindow(const LevelConfig& config) {
     Sprite swapBooster;
     swapBooster.setTexture(swapB); swapBooster.setPosition(900.f, 300.f);
     swapBooster.setScale(.10f, .10f);
-    
+        
     Board board(config);
+    board.setUser(currentUser, &userManager);
+
+    if (currentUser) {
+        cout << "Working for some reason here"<<endl;
+    }
+    else {
+        cout << "Still not working"<<endl;
+    }
 
     Texture backgroundIMG;
     backgroundIMG.loadFromFile("assets/backgroundGame5.png");
@@ -878,10 +934,6 @@ void Game::runSecondWindow(const LevelConfig& config) {
 
 void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted) {
 
-    
-
-   
-
     //Cursor load Sprite
     Texture cursor;
     cursor.loadFromFile("assets/cursor.png");
@@ -915,18 +967,17 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted)
     homeTexture.loadFromFile("assets/backHome.png");
     Sprite homeSprite(homeTexture); homeSprite.setPosition(250.f, 410.f); homeSprite.setScale(.25f, .25f);
 
-
-
-
     RenderWindow returnWindow(VideoMode(800, 600), "PLAY AGAIN!!");
     if (gemTaskAmount == 0) cout << "You won";
     else cout << "you lost";
 
-    if (gemTaskAmount <= 0) {
-        cout << "Level " << levelCompleted << " completed!! ";
-        updateUnlockedLevels(levelCompleted);
+    if (gemTaskAmount <=0) {
+       
+         cout << "Level " << levelCompleted << " completed!! ";
+         updateUnlockedLevels(levelCompleted);
+   
+       
     }
-
     returnWindow.setMouseCursorVisible(false);
     while (returnWindow.isOpen()) {
         Event event;
@@ -965,8 +1016,10 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted)
 
 
             returnWindow.clear();
+
             if(gemTaskAmount==0)returnWindow.draw(backgroundWon);
             else returnWindow.draw(backgroundLost);
+
             returnWindow.draw(text);
             returnWindow.draw(playAgain);
             returnWindow.draw(exitSprite);

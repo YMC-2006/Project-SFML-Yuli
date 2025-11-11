@@ -1,3 +1,4 @@
+
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -16,6 +17,7 @@ private:
     int maxChars = 10;
 
 public:
+
     TextBox(float x, float y, float width, float height, bool password = false) {
         font.loadFromFile("arial.ttf"); 
         isPassword = password;
@@ -54,7 +56,7 @@ public:
             }
 
             string display = isPassword ? string(input.size(), '*') : input; // type text is hidden by *
-            text.setString(display); // just to display the **
+            text.setString(display); // just to display the ** or the normal input in case is the username and not the password
         }
     }
 
@@ -65,4 +67,6 @@ public:
 
     string getText() const { return input; }
     void clear() { input.clear(); text.setString(""); }
+
+
 };

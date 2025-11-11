@@ -1,5 +1,6 @@
 #pragma once
 #include "LevelConfig.h"
+#include "UserManager.h"
 #include <iostream>
 using namespace std;
 using namespace sf;
@@ -8,6 +9,8 @@ class Game {
 private:
 
 	vector<LevelConfig> levels;
+	UserManager userManager;  // loads users.json automatically
+	User* currentUser = nullptr;
 
 public:
 

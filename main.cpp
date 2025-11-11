@@ -12,7 +12,6 @@ int main(){
     srand(time(NULL));
     Game game; // my game
     game.userLogin();
-    game.runGame();
 
     return 0;
 }

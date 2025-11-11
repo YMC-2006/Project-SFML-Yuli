@@ -298,6 +298,11 @@ void Board::swapGems(RenderWindow& window, Event& event) {
 
                                     if (totalMoves <= 0) {
                                         window.close();
+                                        if (gemTaskAmount <= 0 && currentUser) {
+                                            currentUser->addOrUpdateLevel(levelNumber, pointsCounter);
+                                            userManager->saveToFile();
+
+                                        }
                                         game.runThirdWindow(pointsCounter, gemTaskAmount, levelNumber);
                                        
                                     }
@@ -898,3 +903,10 @@ void Board::floatingTexts(RenderWindow& window, int matchedGems) {
     }
 }
 
+
+
+void Board::setUser(User* user, UserManager* manager) {
+
+    currentUser = user;
+    userManager = manager;
+}

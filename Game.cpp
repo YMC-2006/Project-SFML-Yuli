@@ -15,9 +15,9 @@ Game::Game() {
     //Lvl, moves, targetScore, Amount of gem GOAL, type of the gem ,  Ice blocks, Bomb Gems, unlocked lvl, swap booster
     { 1, 1, 1000, 1, 0, false, false, true, false}, // Purple Gem
     { 2, 1, 2000, 1, 1, false, true, false, false},  // Yellow Gem
-    { 3, 1, 3000, 12, 2, true, true, false, false},   // Green Gem
+    { 3, 1, 3000, 1, 2, true, true, false, false},   // Green Gem
     { 4, 1, 4000, 3, 3, false, true, false, false}, // Blue Gem
-    { 5, 12, 5000, 12, 4, false, true, false, true } // Red Gem
+    { 5, 12, 5000, 1, 4, false, true, false, true } // Red Gem
 
     };
 
@@ -113,7 +113,7 @@ void Game::drawLoginForm() {
                         // user exists time to login
                         currentUser = found;
                         cout << "Welcome " << currentUser->getUsername() << "!\n";
-                       
+                        loadUnlockedLevelsFromUser();
                         loginForm.close();
                         runGame();
                         errorInput = false;
@@ -251,7 +251,7 @@ void Game::drawRegisterForm() {
                         currentUser = userManager.findUserByName(username);
                         cout << "Welcome " << currentUser->getUsername() << "!\n";
                         errorInput = false;
-                       
+                        loadUnlockedLevelsFromUser();
                         registerForm.close();
                         runGame();
 
@@ -826,8 +826,8 @@ void Game::runLevelsWindow() {
     View camera(FloatRect(0, 0, 800, 600));
     levelsWindow.setView(camera);
 
-    if (!levels[1].isUnlocked) { level2Button.setColor(Color(255, 255, 255, 128));  cout << "Levels 2 is locked again"<<endl;}
-    else { level2Button.setColor(Color(255, 255, 255, 255)); cout << "Level 2 in UNLOCKED PLAYY"<<endl; }
+    if (!levels[1].isUnlocked) { level2Button.setColor(Color(255, 255, 255, 128));}
+    else { level2Button.setColor(Color(255, 255, 255, 255)); }
 
     if (!levels[2].isUnlocked) { level3Button.setColor(Color(255, 255, 255, 128)); }
     else { level2Button.setColor(Color(255, 255, 255, 255)); }
@@ -920,12 +920,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
     Board board(config);
     board.setUser(currentUser, &userManager);
 
-    if (currentUser) {
-        cout << "Working for some reason here"<<endl;
-    }
-    else {
-        cout << "Still not working"<<endl;
-    }
+  
 
     Texture backgroundIMG;
     backgroundIMG.loadFromFile("assets/backgroundGame5.png");
@@ -995,7 +990,7 @@ void Game::runSecondWindow(const LevelConfig& config) {
     
 }
 
-void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted) {
+void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted, User* loggedUser) {
 
     //Cursor load Sprite
     Texture cursor;
@@ -1037,8 +1032,8 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted)
     if (gemTaskAmount <=0) {
        
          cout << "Level " << levelCompleted << " completed!! ";
-         updateUnlockedLevels(levelCompleted);
-   
+         updatedUnlockedLevels(levelCompleted, loggedUser);
+         loadUnlockedLevelsFromUser();
        
     }
     returnWindow.setMouseCursorVisible(false);
@@ -1099,15 +1094,51 @@ void Game::runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted)
 
 }
 
-void Game::updateUnlockedLevels(int completedLevel) {
+void Game::loadUnlockedLevelsFromUser() {
 
-    if (completedLevel < 1 || completedLevel >= levels.size()) return;
+    if (!currentUser) cout << "THE CURRENT USER IS A BITCH";
 
-    levels[completedLevel].isUnlocked = true;
-   
-    cout << "Level " << completedLevel + 1 << " just got unlocked!!!"<<endl;
+    for (auto& lvl : levels) {
+        lvl.isUnlocked = false;
+    }
+       
+    levels[0].isUnlocked = true;
 
+    // Unlock levels based on the user’s saved progress
+
+    for (auto& lvlScore : currentUser->getUnlockedLevels()) {
+        int index = lvlScore.levelNumber - 1; // my levels goes from 1-5 and in the vector levels goes from 0 to 4
+        if (index >= 0 && index < levels.size()) {
+            levels[index].isUnlocked = true;
+
+            
+        }
+    }
     
+}
+
+void Game::updatedUnlockedLevels(int completeLevel, User* loggedUser) {
+
+    if (completeLevel < 1 || completeLevel >= levels.size()) return;
+
+    levels[completeLevel].isUnlocked = true;
+    
+    cout << "Level " << completeLevel + 1 << " just got unlocked!!!" << endl;
+    currentUser = loggedUser;
+    if (currentUser) {
+        currentUser->addOrUpdateLevel(completeLevel, 0);
+
+        // ensure next level appears in JSON for next time
+        if (completeLevel + 1 <= levels.size())
+            currentUser->addOrUpdateLevel(completeLevel + 1, 0);
+
+        userManager.saveToFile();
+        loadUnlockedLevelsFromUser();   
+    }
+    else {
+        cout << "User is nullptr — pointer lost between windows!" << endl;
+    }
+
 }
 
 void Game::setLevels(int index, bool complete) {

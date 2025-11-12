@@ -23,10 +23,11 @@ public:
 	void runGame();
 	void runLevelsWindow();
 	void runSecondWindow(const LevelConfig& config);
-	void runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted);
-	void showLeaderboard();
+	void runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted, User* loggedUser);
+	
 
-	void updateUnlockedLevels(int completedLevel);
+	void loadUnlockedLevelsFromUser();
+	void updatedUnlockedLevels(int completeLevel, User* loggedUser);
 	void setLevels(int index, bool complete);
 
 };

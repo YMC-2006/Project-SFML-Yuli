@@ -4,7 +4,7 @@
         "UnlockedLevels": [
             {
                 "levelNumber": 1,
-                "score": 1000
+                "score": 2000
             },
             {
                 "levelNumber": 2,
@@ -22,7 +22,7 @@
         "UnlockedLevels": [
             {
                 "levelNumber": 1,
-                "score": 1500
+                "score": 2000
             },
             {
                 "levelNumber": 2,
@@ -36,7 +36,7 @@
         "UnlockedLevels": [
             {
                 "levelNumber": 1,
-                "score": 1500
+                "score": 2000
             },
             {
                 "levelNumber": 2,
@@ -46,13 +46,23 @@
         "Username": "Ant"
     },
     {
-        "Password": "1234",
+        "Password": "uja",
         "UnlockedLevels": [
             {
                 "levelNumber": 1,
                 "score": 30
             }
         ],
-        "Username": "Yuli"
+        "Username": "mar"
+    },
+    {
+        "Password": "dg",
+        "UnlockedLevels": [],
+        "Username": "gdf"
+    },
+    {
+        "Password": "asd",
+        "UnlockedLevels": [],
+        "Username": "ad"
     }
 ]

@@ -14,9 +14,6 @@ void User::addOrUpdateLevel(int levelNumber, int score) {
 			return;
 		}
 		
-		
-
-		
 	}
 
 	unlockedLevels.push_back({ levelNumber, score });

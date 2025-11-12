@@ -29,5 +29,6 @@ public:
 	User* findUser(const string& username, const string& password);
 	User* findUserByName(const string& username);
 	const vector<User> getAllUsers() const { return users;  }
+	vector<User> getUsersSortedByScore() const;
 
 };

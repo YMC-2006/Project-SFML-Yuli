@@ -111,3 +111,16 @@ User* UserManager::findUserByName(const string& username) {
 
 	return nullptr;
 }
+
+vector<User> UserManager::getUsersSortedByScore() const {
+
+	vector<User> sortedUsers = users;
+
+	sort(sortedUsers.begin(), sortedUsers.end(), [](const User& a, const User& b) {
+		return a.getTotalScore() > b.getTotalScore(); // Descending
+	});
+
+
+	return sortedUsers;
+
+}

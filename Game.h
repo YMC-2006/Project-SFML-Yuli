@@ -24,7 +24,7 @@ public:
 	void runLevelsWindow();
 	void runSecondWindow(const LevelConfig& config);
 	void runThirdWindow(int finalScore, int gemTaskAmount, int levelCompleted);
-	
+	void showLeaderboard();
 
 	void updateUnlockedLevels(int completedLevel);
 	void setLevels(int index, bool complete);

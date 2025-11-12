@@ -1,7 +1,58 @@
 [
     {
-        "Password": "wer",
-        "UnlockedLevels": [],
-        "Username": "wer"
+        "Password": "1234",
+        "UnlockedLevels": [
+            {
+                "levelNumber": 1,
+                "score": 1000
+            },
+            {
+                "levelNumber": 2,
+                "score": 2000
+            },
+            {
+                "levelNumber": 3,
+                "score": 2000
+            }
+        ],
+        "Username": "Mark"
+    },
+    {
+        "Password": "123",
+        "UnlockedLevels": [
+            {
+                "levelNumber": 1,
+                "score": 1500
+            },
+            {
+                "levelNumber": 2,
+                "score": 2000
+            }
+        ],
+        "Username": "Erick"
+    },
+    {
+        "Password": "123",
+        "UnlockedLevels": [
+            {
+                "levelNumber": 1,
+                "score": 1500
+            },
+            {
+                "levelNumber": 2,
+                "score": 2000
+            }
+        ],
+        "Username": "Ant"
+    },
+    {
+        "Password": "1234",
+        "UnlockedLevels": [
+            {
+                "levelNumber": 1,
+                "score": 30
+            }
+        ],
+        "Username": "Yuli"
     }
 ]

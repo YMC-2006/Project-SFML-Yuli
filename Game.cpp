@@ -92,8 +92,7 @@ void Game::drawLoginForm() {
                 loginButton.setScale(.16f, .16f);
 
                 if (e.type == Event::MouseButtonPressed) {
-                    cout << "Checking if the acount exists..."<<endl;
-                    cout << "Exist -> welcome ifNOT -> ERROR" << endl;
+                   
 
                     string username = usernameBox.getText();
                     string password = passwordBox.getText();
@@ -172,7 +171,7 @@ void Game::drawRegisterForm() {
     passwordLabel.setPosition(160, 285);
 
     Text ErrorText("", font, 22);
-    ErrorText.setPosition(260, 380);
+    ErrorText.setPosition(210, 350);
     ErrorText.setFillColor(Color::Red);
     bool errorInput = false;
     Clock errorClock;
@@ -226,8 +225,7 @@ void Game::drawRegisterForm() {
                 registerButton.setScale(.15f, .15f);
 
                 if (event.type == Event::MouseButtonPressed) {
-                    cout << "IF account exist tell them to log in instead...." << endl;
-                    cout << "IF NOT create the account!" << endl;
+                   
 
                     string username = usernameBox.getText();
                     string password = passwordBox.getText();
@@ -286,7 +284,6 @@ void Game::drawRegisterForm() {
        
     }
 }
-
 void Game::userLogin() {
 
     cout << "Match-3 Login" << endl;
@@ -589,7 +586,7 @@ void Game::runGame() {
                 currentCatFrame = &catFrame1;
             }
 
-            //Menu test
+            //   ------------ LEADERBOARD WINDOW ----------------
             if (rankingButton.getGlobalBounds().contains(mousePosF)) {
 
                 Texture cursor;
@@ -597,44 +594,62 @@ void Game::runGame() {
                 Sprite spriteCursor(cursor);
                 rankingButton.setScale(0.11f, 0.11f);
 
-                Texture tLB; tLB.loadFromFile("assets/leaderboardBG.png");
+                Texture tLB; tLB.loadFromFile("assets/leaderboardBG2.png");
                 Sprite leaderBoard(tLB);
 
-                Texture tSet; tSet.loadFromFile("assets/settings.png");
-                Sprite settingButton(tSet); settingButton.setPosition(800,900);
+                Texture tlogout; tlogout.loadFromFile("assets/logout.png");
+                Sprite logoutButton(tlogout); logoutButton.setPosition(890, 700); logoutButton.setScale(.30f, .30f);
+
+                
+
                 
                 if (event.type == Event::MouseButtonPressed) {
                     clickSound.play();
-                    RenderWindow windowTest(VideoMode(1000,800),"Leader Board");
-                    windowTest.setMouseCursorVisible(false);
+                    RenderWindow leaderboardWindow(VideoMode(1000,800),"Leader Board");
+                    leaderboardWindow.setMouseCursorVisible(false);
 
-                   
-                    while (windowTest.isOpen()) {
-                        while (windowTest.pollEvent(event)) {
-                            if (event.type == Event::Closed) windowTest.close();
-                            if (Keyboard::isKeyPressed(Keyboard::Escape)) windowTest.close();
-                            
-                            if (event.type == Event::MouseButtonPressed) {
-                                Vector2i mousePos = Mouse::getPosition(windowMain);
-                                Vector2f mousePosF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-                                
-                            }
-                          
-                         
+               
 
+                    // Users sorted -----------------------------------------------
+                    Font font;
+                    font.loadFromFile("arial.ttf"); // your same font
+                    vector<User> sortedUsers = userManager.getUsersSortedByScore();
+                    vector<Text> dataSorted;
+                    float y = 230;
+                    int rank = 1;
+
+                    for (auto& user : sortedUsers) {
+                        string outText = user.getUsername() + " ----------------------- " + to_string(user.getTotalScore()) + " pts";
+                        Text displayText(outText, font, 28);
+                        displayText.setPosition(300, y);
+                        displayText.setFillColor(Color::White);
+
+                        dataSorted.push_back(displayText);
+                        y += 90;
+                        rank++;
+                    }
+
+                        
+                    while (leaderboardWindow.isOpen()) {
+                        while (leaderboardWindow.pollEvent(event)) {
+                            if (event.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape))
+                                leaderboardWindow.close();
                           
                         }
                       
 
-                        
-
-                        windowTest.clear();
-                        Vector2i mousePosCursor = Mouse::getPosition(windowTest);
+                        leaderboardWindow.clear();
+                        Vector2i mousePosCursor = Mouse::getPosition(leaderboardWindow);
                         spriteCursor.setPosition(static_cast<float>(mousePosCursor.x), static_cast<float>(mousePosCursor.y));
-                        windowTest.draw(leaderBoard);
-                        windowTest.draw(spriteCursor);
-                        windowTest.draw(settingButton);
-                        windowTest.display();
+                        leaderboardWindow.draw(leaderBoard);
+                        for (auto& data : dataSorted) {
+                            leaderboardWindow.draw(data);
+                            
+                        }
+                        leaderboardWindow.draw(logoutButton);
+                        leaderboardWindow.draw(spriteCursor);
+                        
+                        leaderboardWindow.display();
                        
                     }
 
@@ -1100,3 +1115,4 @@ void Game::setLevels(int index, bool complete) {
     levels[index].isUnlocked = complete;
 
 }
+

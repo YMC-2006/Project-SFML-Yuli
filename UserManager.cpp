@@ -122,5 +122,5 @@ vector<User> UserManager::getUsersSortedByScore() const {
 
 
 	return sortedUsers;
-
+	 
 }
